@@ -7,14 +7,14 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
   getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  updateProfile
+  setPersistence,
+  browserLocalPersistence
 } from 'firebase/auth';
 import { 
+  initializeFirestore,
   getFirestore, 
   doc, 
   collection, 
@@ -31,8 +31,18 @@ import { firebaseConfig } from '../firebase-config.js';
 // Initialize Firebase App
 export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// CRITICAL: The app will break without specifying firestoreDatabaseId
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// Initialize Firestore targeting the provisioned database with long-polling enabled for iframe environment
+function initFirestoreInstance() {
+  try {
+    return initializeFirestore(app, {
+      experimentalForceLongPolling: true
+    }, firebaseConfig.firestoreDatabaseId);
+  } catch (e) {
+    return getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  }
+}
+
+export const db = initFirestoreInstance();
 export const auth = getAuth(app);
 
 // Operation types enum conforming to specification
@@ -88,8 +98,8 @@ export async function testConnection() {
     await getDocFromServer(doc(db, 'test', 'connection'));
     console.log('[Firebase] Connection to Firestore verified.');
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error('[Firebase] Please check your Firebase configuration.');
+    if (error instanceof Error && error.message && error.message.includes('the client is offline')) {
+      console.warn('[Firebase] Client running in offline mode.');
     }
   }
 }
@@ -98,24 +108,13 @@ export async function testConnection() {
 testConnection();
 
 /**
- * Sign in using Google OAuth Popup
- */
-export async function loginWithGoogle() {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    return result;
-  } catch (err) {
-    console.error('[Firebase] Google sign-in error:', err);
-    throw err;
-  }
-}
-
-/**
  * Sign in using Email / Password
  */
 export async function loginWithEmail(email, password) {
   try {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (pErr) {}
     const result = await signInWithEmailAndPassword(auth, email, password);
     return result;
   } catch (err) {
@@ -139,13 +138,13 @@ export async function logoutUser() {
 /**
  * Modular Firestore adapter for backward-compatible document queries
  */
-export function createFirestoreAdapter() {
+export function createFirestoreAdapter(customDb = db) {
   return {
-    _rawDb: db,
+    _rawDb: customDb,
     collection: function(colName) {
       return {
         doc: function(docId) {
-          const docRef = doc(db, colName, docId);
+          const docRef = doc(customDb, colName, docId);
           return {
             ref: docRef,
             set: async function(data, options = {}) {
@@ -195,19 +194,21 @@ export function createFirestoreAdapter() {
   };
 }
 
-// Bind to AppState if AppState exists
+// Bind to AppState and global scope if in browser
 if (typeof window !== 'undefined') {
   if (!window.AppState) window.AppState = {};
+  window.createFirestoreAdapter = createFirestoreAdapter;
   window.AppState.db = createFirestoreAdapter();
   window.modularFirebase = {
     app,
     db,
     auth,
-    loginWithGoogle,
     loginWithEmail,
     logoutUser,
     testConnection,
     serverTimestamp,
-    deleteField
+    deleteField,
+    createFirestoreAdapter
   };
 }
+

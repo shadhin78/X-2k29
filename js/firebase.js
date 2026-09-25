@@ -239,20 +239,10 @@ window.FirebaseService = {
         if (config && config.firebaseConfig) {
             window.firebaseConfig = Object.assign({}, window.firebaseConfig, config.firebaseConfig);
         }
-        if (typeof window !== 'undefined' && window.modularFirebase && window.modularFirebase.db) {
-            if (typeof window.createFirestoreAdapter === 'function') {
-                AppState.db = window.createFirestoreAdapter();
-            }
-        }
-        if (!AppState.db && typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
-            if (!firebase.apps || firebase.apps.length === 0) {
-                firebase.initializeApp(window.firebaseConfig);
-            }
-            try {
-                AppState.db = firebase.firestore();
-            } catch (e) {
-                console.warn("Compat firestore initialization:", e);
-            }
+        if (typeof window !== 'undefined' && typeof window.createFirestoreAdapter === 'function') {
+            AppState.db = window.createFirestoreAdapter();
+        } else if (typeof window !== 'undefined' && window.modularFirebase && typeof window.modularFirebase.createFirestoreAdapter === 'function') {
+            AppState.db = window.modularFirebase.createFirestoreAdapter();
         }
         this._firestoreInitialized = true;
         console.log("Firebase service initialized in cloud mode for project: " + ((window.firebaseConfig && window.firebaseConfig.projectId) || 'project-x-2k-29'));
@@ -905,53 +895,57 @@ window.FirebaseService = {
 
             if (AppState.db && user && user.uid && window.location.protocol !== 'file:') {
                 const cleanPayload = jsonStr ? JSON.parse(jsonStr) : JSON.parse(JSON.stringify(payload));
-                if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) {
-                    cleanPayload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-                    if (tombstones && typeof tombstones === 'object') {
-                        if (!cleanPayload.subjectFocusTargets) cleanPayload.subjectFocusTargets = {};
-                        if (!cleanPayload._tombstones) cleanPayload._tombstones = tombstones;
+                const deleteFieldValue = (typeof window !== 'undefined' && window.modularFirebase && typeof window.modularFirebase.deleteField === 'function')
+                    ? window.modularFirebase.deleteField()
+                    : ((typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) ? firebase.firestore.FieldValue.delete() : null);
 
-                        // Process subjectFocusTargets tombstones vs active targets based on timestamps
-                        Object.keys(cleanPayload.subjectFocusTargets).forEach(sub => {
-                            const target = cleanPayload.subjectFocusTargets[sub];
-                            if (target && target !== firebase.firestore.FieldValue.delete()) {
-                                const targetTime = target.updatedAt || (target.createdAt ? new Date(target.createdAt).getTime() : 0);
-                                const tombstoneVal = tombstones[`subjectFocusTargets_${sub}`] || tombstones[sub];
-                                const tombstoneTime = (typeof tombstoneVal === 'number') ? tombstoneVal : (tombstoneVal === true ? Number.MAX_SAFE_INTEGER : 0);
+                const serverTimestampValue = (typeof window !== 'undefined' && window.modularFirebase && typeof window.modularFirebase.serverTimestamp === 'function')
+                    ? window.modularFirebase.serverTimestamp()
+                    : ((typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) ? firebase.firestore.FieldValue.serverTimestamp() : Date.now());
 
-                                if (targetTime > tombstoneTime) {
-                                    delete tombstones[`subjectFocusTargets_${sub}`];
-                                    delete tombstones[sub];
-                                    delete cleanPayload._tombstones[`subjectFocusTargets_${sub}`];
-                                    delete cleanPayload._tombstones[sub];
-                                    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) {
-                                        cleanPayload._tombstones[`subjectFocusTargets_${sub}`] = firebase.firestore.FieldValue.delete();
-                                        cleanPayload._tombstones[sub] = firebase.firestore.FieldValue.delete();
-                                    }
+                cleanPayload.updatedAt = serverTimestampValue;
+                if (tombstones && typeof tombstones === 'object') {
+                    if (!cleanPayload.subjectFocusTargets) cleanPayload.subjectFocusTargets = {};
+                    if (!cleanPayload._tombstones) cleanPayload._tombstones = tombstones;
+
+                    // Process subjectFocusTargets tombstones vs active targets based on timestamps
+                    Object.keys(cleanPayload.subjectFocusTargets).forEach(sub => {
+                        const target = cleanPayload.subjectFocusTargets[sub];
+                        if (target && target !== deleteFieldValue) {
+                            const targetTime = target.updatedAt || (target.createdAt ? new Date(target.createdAt).getTime() : 0);
+                            const tombstoneVal = tombstones[`subjectFocusTargets_${sub}`] || tombstones[sub];
+                            const tombstoneTime = (typeof tombstoneVal === 'number') ? tombstoneVal : (tombstoneVal === true ? Number.MAX_SAFE_INTEGER : 0);
+
+                            if (targetTime > tombstoneTime) {
+                                delete tombstones[`subjectFocusTargets_${sub}`];
+                                delete tombstones[sub];
+                                delete cleanPayload._tombstones[`subjectFocusTargets_${sub}`];
+                                delete cleanPayload._tombstones[sub];
+                                if (deleteFieldValue !== null) {
+                                    cleanPayload._tombstones[`subjectFocusTargets_${sub}`] = deleteFieldValue;
+                                    cleanPayload._tombstones[sub] = deleteFieldValue;
+                                }
+                            } else {
+                                delete cleanPayload.subjectFocusTargets[sub];
+                                if (deleteFieldValue !== null) {
+                                    cleanPayload.subjectFocusTargets[sub] = deleteFieldValue;
+                                }
+                            }
+                        }
+                    });
+
+                    Object.keys(tombstones).forEach(tKey => {
+                        if (tKey.startsWith('subjectFocusTargets_')) {
+                            const subKey = tKey.substring('subjectFocusTargets_'.length);
+                            if (!cleanPayload.subjectFocusTargets[subKey] || cleanPayload.subjectFocusTargets[subKey] === deleteFieldValue) {
+                                if (deleteFieldValue !== null) {
+                                    cleanPayload.subjectFocusTargets[subKey] = deleteFieldValue;
                                 } else {
-                                    delete cleanPayload.subjectFocusTargets[sub];
-                                    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) {
-                                        cleanPayload.subjectFocusTargets[sub] = firebase.firestore.FieldValue.delete();
-                                    }
+                                    delete cleanPayload.subjectFocusTargets[subKey];
                                 }
                             }
-                        });
-
-                        Object.keys(tombstones).forEach(tKey => {
-                            if (tKey.startsWith('subjectFocusTargets_')) {
-                                const subKey = tKey.substring('subjectFocusTargets_'.length);
-                                if (!cleanPayload.subjectFocusTargets[subKey] || cleanPayload.subjectFocusTargets[subKey] === firebase.firestore.FieldValue.delete()) {
-                                    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) {
-                                        cleanPayload.subjectFocusTargets[subKey] = firebase.firestore.FieldValue.delete();
-                                    } else {
-                                        delete cleanPayload.subjectFocusTargets[subKey];
-                                    }
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    cleanPayload.updatedAt = Date.now();
+                        }
+                    });
                 }
 
                 console.log(`SYNC: WRITE_ATTEMPT - UID: ${user.uid}, SaveGen: ${captureGen}, Rev: ${targetRevision}, WriteId: ${clientWriteId}`);
