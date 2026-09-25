@@ -90,14 +90,52 @@ function hasUserData(payload) {
     return false;
 }
 
+// Operation types conforming to standard Firebase error handler specification
+const OperationType = {
+    CREATE: 'create',
+    UPDATE: 'update',
+    DELETE: 'delete',
+    LIST: 'list',
+    GET: 'get',
+    WRITE: 'write',
+};
+window.OperationType = OperationType;
+
+function handleFirestoreError(error, operationType, path) {
+    const auth = (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') ? firebase.auth() : null;
+    const currentUser = auth ? auth.currentUser : null;
+    const errInfo = {
+        error: error instanceof Error ? error.message : String(error),
+        authInfo: {
+            userId: currentUser?.uid || null,
+            email: currentUser?.email || null,
+            emailVerified: currentUser?.emailVerified || null,
+            isAnonymous: currentUser?.isAnonymous || null,
+            tenantId: currentUser?.tenantId || null,
+            providerInfo: currentUser?.providerData?.map(provider => ({
+                providerId: provider.providerId,
+                email: provider.email,
+            })) || []
+        },
+        operationType,
+        path
+    };
+    console.error('Firestore Error: ', JSON.stringify(errInfo));
+    throw new Error(JSON.stringify(errInfo));
+}
+window.handleFirestoreError = handleFirestoreError;
+
 const firebaseConfig = {
+    projectId: "project-x-2k-29",
+    appId: "1:445936647757:web:166e2d905fa7cc62a12604",
     apiKey: "AIzaSyBYadAquEl7BWd8nPy19q6UhDW4FYk3lcs",
     authDomain: "project-x-2k-29.firebaseapp.com",
-    projectId: "project-x-2k-29",
+    firestoreDatabaseId: "ai-studio-x2k29-0bea0128-fcaa-4732-97b2-c13b97d4515f",
     storageBucket: "project-x-2k-29.firebasestorage.app",
     messagingSenderId: "445936647757",
-    appId: "1:445936647757:web:166e2d905fa7cc62a12604",
-    firestoreDatabaseId: "ai-studio-x2k29-0bea0128-fcaa-4732-97b2-c13b97d4515f"
+    measurementId: "",
+    oAuthClientId: "445936647757-kp7rrrmh1oq5ra0m0mtbdu6lr9mj95kh.apps.googleusercontent.com",
+    recaptchaSiteKey: ""
 };
 window.firebaseConfig = firebaseConfig;
 
@@ -105,7 +143,7 @@ window.FirebaseService = {
     _saveDebounceTimer: null,
     _unsubscribeSnapshot: null,
     _authListeners: [],
-    _firestoreInitialized: false,
+    _firestoreInitialized: true,
     _isSaving: false,
     _hasPendingWriteInFlight: false,
     _lastCommittedRevision: 0,
@@ -115,7 +153,7 @@ window.FirebaseService = {
     _retryCount: 0,
     _retryTimer: null,
     _lastLocalEditTime: 0,
-    cloudDocumentExists: null,
+    cloudDocumentExists: true,
 
     notifyLocalMutation: function(reason = "") {
         this._lastLocalEditTime = Date.now() + (window.serverTimeOffset || 0);
@@ -178,107 +216,46 @@ window.FirebaseService = {
         } catch(e) {}
     },
 
-    // 1. Fetch Firebase Configuration from API, fallback to .env or cached settings
+    // 1. Fetch Configuration (Cloud mode with local fallback)
     fetchConfig: async function() {
         if (typeof performance !== 'undefined' && performance.mark) {
             performance.mark('x29-boot-start');
         }
-        if (window.location.protocol === 'file:') {
-            console.log("file:// protocol detected in fetchConfig. Using offline fallback config.");
-            return firebaseConfig;
-        }
-
         try {
-            const res = await fetch('/api/config');
-            if (res.ok) {
-                const freshConfig = await res.json();
-                if (freshConfig && freshConfig.apiKey) {
-                    Object.assign(firebaseConfig, freshConfig);
-                    window.firebaseConfig = firebaseConfig;
-                    safeStorage.setItem('firebaseConfig', JSON.stringify(firebaseConfig));
+            const resp = await fetch('/api/config');
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data && data.firebaseConfig) {
+                    window.firebaseConfig = Object.assign({}, window.firebaseConfig, data.firebaseConfig);
+                    return data;
                 }
-                const serverDateStr = res.headers.get('Date');
-                if (serverDateStr) {
-                    const serverTime = new Date(serverDateStr).getTime();
-                    window.serverTimeOffset = serverTime - Date.now();
-                }
-                return firebaseConfig;
             }
-        } catch (err) {
-            console.warn("API config fetch notice:", err);
-        }
-
-        const cachedConfig = safeStorage.getItem('firebaseConfig');
-        if (cachedConfig) {
-            try {
-                const parsed = JSON.parse(cachedConfig);
-                if (parsed && parsed.apiKey) {
-                    Object.assign(firebaseConfig, parsed);
-                }
-            } catch (e) {
-                safeStorage.removeItem('firebaseConfig');
-            }
-        }
-
-        return firebaseConfig;
+        } catch (e) {}
+        return { mode: 'cloud', firebaseEnabled: true, firebaseConfig: window.firebaseConfig };
     },
 
-    // 2. Initialize Firebase Client App and Firestore reference
+    // 2. Initialize Firebase and Firestore
     init: function(config) {
-        const finalConfig = config || firebaseConfig;
-        if (window.location.protocol === 'file:') {
-            AppState.db = null;
-            console.log("Firebase initialized in mock mode for file:// protocol.");
-            return;
+        if (config && config.firebaseConfig) {
+            window.firebaseConfig = Object.assign({}, window.firebaseConfig, config.firebaseConfig);
         }
-        if (typeof firebase !== 'undefined') {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(finalConfig);
-                }
-                if (typeof firebase.firestore === 'function') {
-                    const dbId = finalConfig.firestoreDatabaseId && finalConfig.firestoreDatabaseId !== '(default)'
-                        ? finalConfig.firestoreDatabaseId
-                        : undefined;
-                    let dbInstance = null;
-                    if (dbId && typeof firebase.app === 'function') {
-                        try {
-                            dbInstance = firebase.app().firestore(dbId);
-                        } catch (e) {
-                            console.warn("Custom database instance notice:", e);
-                        }
-                    }
-                    if (!dbInstance) {
-                        dbInstance = firebase.firestore();
-                    }
-                    AppState.db = dbInstance;
-
-                    if (!this._firestoreInitialized) {
-                        try {
-                            AppState.db.enablePersistence({ synchronizeTabs: true }).catch(err => {
-                                console.warn("Firestore persistence notice:", err.code);
-                            });
-                            this._firestoreInitialized = true;
-                        } catch (e) {
-                            console.warn("Could not set Firestore settings:", e);
-                        }
-                    }
-
-                    // Test Firestore connection on boot
-                    try {
-                        AppState.db.collection('users').doc('connection_check').get({ source: 'server' }).catch(err => {
-                            if (err && err.message && err.message.includes('the client is offline')) {
-                                console.warn("Firestore connectivity notice: client is offline or rules restricted.");
-                            }
-                        });
-                    } catch (testErr) {}
-                }
-                console.log("Firebase initialized successfully with project:", finalConfig.projectId);
-            } catch (initErr) {
-                console.warn("Firebase initializeApp caught error:", initErr);
-                AppState.db = null;
+        if (typeof window !== 'undefined' && window.modularFirebase && window.modularFirebase.db) {
+            if (typeof window.createFirestoreAdapter === 'function') {
+                AppState.db = window.createFirestoreAdapter();
             }
         }
+        if (!AppState.db && typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
+            if (!firebase.apps || firebase.apps.length === 0) {
+                firebase.initializeApp(window.firebaseConfig);
+            }
+            try {
+                AppState.db = firebase.firestore();
+            } catch (e) {
+                console.warn("Compat firestore initialization:", e);
+            }
+        }
+        this._firestoreInitialized = true;
+        console.log("Firebase service initialized in cloud mode for project: " + ((window.firebaseConfig && window.firebaseConfig.projectId) || 'project-x-2k-29'));
     },
 
     // 3. Authenticate with Email / Password (delegated to AuthService)
@@ -761,6 +738,11 @@ window.FirebaseService = {
             }, (error) => {
                 console.error(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=FIRESTORE_ERROR UID=${activeUid}`, error);
                 showSync('error');
+                if (error && (error.code === 'permission-denied' || (error.message && error.message.includes('insufficient permissions')))) {
+                    try {
+                        handleFirestoreError(error, OperationType.GET, `users/${activeUid}`);
+                    } catch (e) {}
+                }
                 if (typeof onError === 'function') {
                     onError(error);
                 }
@@ -789,7 +771,14 @@ window.FirebaseService = {
             }
         };
         console.log(`SYNC_DEBUG DIAGNOSTIC_WRITE_START: UID=${user.uid}`);
-        await AppState.db.collection('users').doc(user.uid).set(diagnosticPayload, { merge: true });
+        try {
+            await AppState.db.collection('users').doc(user.uid).set(diagnosticPayload, { merge: true });
+        } catch (diagErr) {
+            if (diagErr && (diagErr.code === 'permission-denied' || (diagErr.message && diagErr.message.includes('insufficient permissions')))) {
+                handleFirestoreError(diagErr, OperationType.WRITE, `users/${user.uid}`);
+            }
+            throw diagErr;
+        }
         console.log(`SYNC_DEBUG DIAGNOSTIC_WRITE_SUCCESS: UID=${user.uid}`);
         return diagnosticPayload._syncDiagnostic;
     },
@@ -966,7 +955,14 @@ window.FirebaseService = {
                 }
 
                 console.log(`SYNC: WRITE_ATTEMPT - UID: ${user.uid}, SaveGen: ${captureGen}, Rev: ${targetRevision}, WriteId: ${clientWriteId}`);
-                await AppState.db.collection('users').doc(user.uid).set(cleanPayload, { merge: true });
+                try {
+                    await AppState.db.collection('users').doc(user.uid).set(cleanPayload, { merge: true });
+                } catch (writeErr) {
+                    if (writeErr && (writeErr.code === 'permission-denied' || (writeErr.message && writeErr.message.includes('insufficient permissions')))) {
+                        handleFirestoreError(writeErr, OperationType.WRITE, `users/${user.uid}`);
+                    }
+                    throw writeErr;
+                }
 
                 // Re-verify generation after async write
                 if (captureGen !== (AppState.syncGeneration || 0)) {
@@ -1092,6 +1088,9 @@ window.FirebaseService = {
                 await AppState.db.collection('users').doc(user.uid).delete();
                 console.log("SYNC: CLOUD_DOCUMENT_DELETED for UID:", user.uid);
             } catch(e) {
+                if (e && (e.code === 'permission-denied' || (e.message && e.message.includes('insufficient permissions')))) {
+                    handleFirestoreError(e, OperationType.DELETE, `users/${user.uid}`);
+                }
                 console.warn("Failed to delete Firestore cloud document:", e);
             }
         }

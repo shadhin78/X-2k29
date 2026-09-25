@@ -98,8 +98,8 @@
 
             if (typeof location !== 'undefined' && location.protocol === 'file:') {
                 console.log("[AuthService] Firebase login mocked under file:// protocol.");
-                if (cleanEmail === 'ris2k29@gmail.com' && password === '787898') {
-                    const localUser = { email: 'ris2k29@gmail.com', uid: 'file_protocol_local_user', displayName: 'ris2k29 (Local)' };
+                if (cleanEmail && password) {
+                    const localUser = { email: cleanEmail, uid: 'file_protocol_local_user', displayName: cleanEmail.split('@')[0] + ' (Local)' };
                     storage.setItem('local_auth_user', JSON.stringify(localUser));
                     this._notifyAuthListeners(localUser);
                     return { user: localUser };
@@ -107,10 +107,32 @@
                 throw { code: 'auth/wrong-password', message: 'Invalid email or password.' };
             }
 
+            // Real Firebase Authentication via modular SDK or Compat instance
+            if (typeof window !== 'undefined' && window.modularFirebase && typeof window.modularFirebase.loginWithEmail === 'function') {
+                try {
+                    const res = await window.modularFirebase.loginWithEmail(cleanEmail, password);
+                    if (res && res.user) {
+                        const userObj = {
+                            email: res.user.email,
+                            uid: res.user.uid,
+                            displayName: res.user.displayName || res.user.email
+                        };
+                        storage.setItem('local_auth_user', JSON.stringify(userObj));
+                        this._notifyAuthListeners(res.user);
+                    }
+                    return res;
+                } catch (modErr) {
+                    console.warn("[AuthService] Modular sign-in failed:", modErr);
+                    throw modErr;
+                }
+            }
+
             const fb = typeof global.firebase !== 'undefined' ? global.firebase : (typeof firebase !== 'undefined' ? firebase : null);
             if (fb && typeof fb.auth === 'function') {
                 try {
-                    await fb.auth().setPersistence(fb.auth.Auth.Persistence.LOCAL);
+                    if (fb.auth.Auth && fb.auth.Auth.Persistence) {
+                        await fb.auth().setPersistence(fb.auth.Auth.Persistence.LOCAL);
+                    }
                     const res = await fb.auth().signInWithEmailAndPassword(cleanEmail, password);
                     if (res && res.user) {
                         const userObj = {
@@ -124,21 +146,8 @@
                     return res;
                 } catch (fbErr) {
                     console.warn("[AuthService] Sign-in failed:", fbErr);
-                    if (cleanEmail === 'ris2k29@gmail.com' && password === '787898') {
-                        const localUser = { email: 'ris2k29@gmail.com', uid: 'local_admin_user', displayName: 'ris2k29' };
-                        storage.setItem('local_auth_user', JSON.stringify(localUser));
-                        this._notifyAuthListeners(localUser);
-                        return { user: localUser };
-                    }
                     throw fbErr;
                 }
-            }
-
-            if (cleanEmail === 'ris2k29@gmail.com' && password === '787898') {
-                const localUser = { email: 'ris2k29@gmail.com', uid: 'local_admin_user', displayName: 'ris2k29' };
-                storage.setItem('local_auth_user', JSON.stringify(localUser));
-                this._notifyAuthListeners(localUser);
-                return { user: localUser };
             }
 
             throw { code: 'auth/wrong-password', message: 'Invalid email or password.' };

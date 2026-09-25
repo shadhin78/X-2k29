@@ -22,10 +22,19 @@
         rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase Libraries -->
-    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Compat & ESM Imports -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+      }
+    }
+    </script>
     <link rel="stylesheet" href="css/style.css?v=1.0.11">
 </head>
 
@@ -88,10 +97,17 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label for="password"
-                        class="block text-[10px] uppercase font-black tracking-widest text-slate-400">Password</label>
-                    <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••"
-                        class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-sm placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 glowing-input transition-all">
+                    <div class="flex items-center justify-between">
+                        <label for="password"
+                            class="block text-[10px] uppercase font-black tracking-widest text-slate-400">Password</label>
+                        <button type="button" id="toggle-password" class="text-[10px] uppercase font-black tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 focus:outline-none">
+                            <span id="toggle-password-text">Show</span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••"
+                            class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 pr-10 text-sm placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 glowing-input transition-all">
+                    </div>
                 </div>
 
                 <button type="submit" id="btn-submit"
@@ -122,6 +138,7 @@
     <script src="js/services/auth.js?v=1.0.1"></script>
     <script src="js/state.js?v=1.0.11"></script>
     <script src="js/firebase.js?v=1.0.11"></script>
+    <script type="module" src="js/services/firebase.js"></script>
     <script src="js/pages/login/login.js?v=1.0.1"></script>
 </body>
 

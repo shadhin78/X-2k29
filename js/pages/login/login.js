@@ -43,7 +43,7 @@
             }
         }
 
-        // Load configurations & Initialize Firebase
+        // Load configurations & Initialize Storage
         const fbService = (typeof window !== 'undefined' && window.FirebaseService)
             ? window.FirebaseService
             : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
@@ -53,12 +53,10 @@
                 const config = await fbService.fetchConfig();
                 if (typeof fbService.init === 'function') {
                     fbService.init(config);
-                    console.log("Firebase initialized for login.");
+                    console.log("Storage initialized for login.");
                 }
             } catch (e) {
-                console.error("Firebase init error:", e);
-                showError("Firebase initialization failed.");
-                return;
+                console.error("Storage init error:", e);
             }
         }
 
@@ -73,6 +71,19 @@
                     if (typeof window.location !== 'undefined') {
                         window.location.href = 'index.html';
                     }
+                }
+            });
+        }
+
+        // Show/Hide Password Toggle
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const togglePasswordText = document.getElementById('toggle-password-text');
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', () => {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                if (togglePasswordText) {
+                    togglePasswordText.textContent = isPassword ? 'Hide' : 'Show';
                 }
             });
         }

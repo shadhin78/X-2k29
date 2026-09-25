@@ -12,6 +12,7 @@
 
 import '../state.js';
 import '../services/auth.js';
+import '../services/firebase.js';
 import '../firebase.js';
 import '../../shared/services/timerService.js';
 import '../../router/router.js';
@@ -51,7 +52,7 @@ export const App = {
             if (typeof window !== 'undefined' && window.FirebaseService && typeof window.FirebaseService.fetchConfig === 'function') {
                 const config = await window.FirebaseService.fetchConfig();
                 if (typeof window.setLoadingProgress === 'function') {
-                    window.setLoadingProgress(40, 'Connecting to server...');
+                    window.setLoadingProgress(40, 'Initializing workspace...');
                 }
                 window.FirebaseService.init(config);
                 if (typeof window.setLoadingProgress === 'function') {
@@ -59,7 +60,7 @@ export const App = {
                 }
             }
         } catch (e) {
-            console.error('[App] Firebase init failed:', e);
+            console.error('[App] Storage init failed:', e);
         }
 
         // Auth state observer / Route guard
@@ -89,7 +90,7 @@ export const App = {
                     window.currentUser = user;
                 }
                 if (typeof window !== 'undefined' && typeof window.setLoadingProgress === 'function') {
-                    window.setLoadingProgress(70, 'Loading cloud workspace...');
+                    window.setLoadingProgress(70, 'Loading workspace...');
                 }
 
                 // Update user profile DOM elements

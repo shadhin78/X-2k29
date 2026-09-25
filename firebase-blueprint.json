@@ -2,61 +2,214 @@
   "entities": {
     "UserWorkspace": {
       "title": "User Workspace",
-      "description": "User personal workspace tracking study, targets, routines, and performance metrics",
+      "description": "User profile, state, study plan tasks, targets, and tracking configuration.",
       "type": "object",
       "properties": {
-        "userId": {
+        "email": {
           "type": "string",
-          "description": "Identifier of the user workspace"
+          "description": "Email address of the user",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the user",
+          "maxLength": 128
         },
         "tasks": {
           "type": "array",
-          "description": "List of user study tasks"
+          "description": "Array of study tasks"
         },
         "tracks": {
           "type": "array",
-          "description": "List of active tracks"
+          "description": "Configured study tracks"
+        },
+        "customSyllabus": {
+          "type": "object",
+          "description": "Custom syllabus tree"
         },
         "syllabusStructure": {
           "type": "object",
-          "description": "Structure of syllabus topics and chapters"
+          "description": "Structured syllabus definitions"
         },
-        "dailyTargetsDatabase": {
+        "customPrograms": {
           "type": "object",
-          "description": "Target records for daily actions"
+          "description": "Custom academic programs"
         },
-        "weeklyTargetsDatabase": {
-          "type": "object",
-          "description": "Target records for weekly actions"
-        },
-        "monthlyTargetsDatabase": {
-          "type": "object",
-          "description": "Target records for monthly actions"
-        },
-        "scheduleBlocks": {
+        "customActions": {
           "type": "array",
-          "description": "Daily schedule blocks"
+          "description": "Custom actions and habits list"
+        },
+        "paceGoals": {
+          "type": "array",
+          "description": "Pace estimation goals"
+        },
+        "passedItems": {
+          "type": "object",
+          "description": "Completed programs and subjects"
+        },
+        "celebrationTargets": {
+          "type": "object",
+          "description": "Passed celebration milestones"
+        },
+        "revisionData": {
+          "type": "object",
+          "description": "Active revisions and chapter progress"
+        },
+        "programVisibility": {
+          "type": "object",
+          "description": "Visibility toggles for programs"
+        },
+        "subjectTimeLinks": {
+          "type": "object",
+          "description": "Subject pacing time targets"
+        },
+        "successResults": {
+          "type": "array",
+          "description": "Exam and academic outcome results"
         },
         "timerLogs": {
           "type": "array",
-          "description": "Logged focus time intervals"
+          "description": "Focus timer completed session logs"
+        },
+        "dailyFocusHoursTarget": {
+          "type": "number",
+          "description": "Daily target focus hours"
+        },
+        "dailyFocusHoursTargetDate": {
+          "type": "string",
+          "description": "Current date string for focus target"
+        },
+        "dailyFocusHoursTargetHistory": {
+          "type": "array",
+          "description": "History of daily focus targets"
+        },
+        "timerAnalyticsRange": {
+          "type": "number",
+          "description": "Days range for timer analytics"
+        },
+        "timerAnalyticsGrouping": {
+          "type": "string",
+          "description": "Grouping type for timer analytics"
+        },
+        "timerAnalyticsChartStyle": {
+          "type": "string",
+          "description": "Chart visual style for timer analytics"
+        },
+        "spectraHeatmapRange": {
+          "type": "number",
+          "description": "Range in days for spectra heatmap"
+        },
+        "sessionHistoryFilter": {
+          "type": "string",
+          "description": "Filter criterion for session history"
+        },
+        "subjectFocusTargets": {
+          "type": "object",
+          "description": "Configured focus targets per subject"
+        },
+        "dashboardConfig": {
+          "type": "object",
+          "description": "Dashboard card preferences and states"
+        },
+        "weeklyTargetsDatabase": {
+          "type": "object",
+          "description": "Target items grouped by week"
+        },
+        "monthlyTargetsDatabase": {
+          "type": "object",
+          "description": "Target items grouped by month"
+        },
+        "dailyTargetsDatabase": {
+          "type": "object",
+          "description": "Target items grouped by day"
+        },
+        "scheduleBlocks": {
+          "type": "array",
+          "description": "Daily schedule routine blocks"
+        },
+        "scheduleBlocks2": {
+          "type": "array",
+          "description": "Secondary daily schedule blocks"
+        },
+        "scheduleGroups": {
+          "type": "array",
+          "description": "Grouped schedule slots"
+        },
+        "fiscalLedger": {
+          "type": "object",
+          "description": "Budget and transaction entries"
         },
         "examSessions": {
           "type": "array",
-          "description": "Upcoming or logged exam sessions"
+          "description": "Scheduled exam timeline entries"
+        },
+        "examRoutine": {
+          "type": "array",
+          "description": "Exam routine configuration"
+        },
+        "selectedCountdownExamId": {
+          "type": "string",
+          "description": "Exam ID targeted for countdown header"
+        },
+        "activeTimerState": {
+          "type": "object",
+          "description": "Current active timer session state"
+        },
+        "activeRoutineSet": {
+          "type": "number",
+          "description": "Active routine schedule set identifier"
+        },
+        "subjectColors": {
+          "type": "object",
+          "description": "Custom subject highlight color mapping"
+        },
+        "_tombstones": {
+          "type": "object",
+          "description": "Deconfliction deletion tombstones map"
+        },
+        "_lastWriteId": {
+          "type": "string",
+          "description": "Write session echo deconfliction identifier",
+          "maxLength": 128
+        },
+        "_clientWriteTimestamp": {
+          "type": "number",
+          "description": "Epoch millisecond time of client write"
+        },
+        "_syncDiagnostic": {
+          "type": "object",
+          "description": "Sync diagnostic ping test payload"
         },
         "updatedAt": {
-          "type": "number",
-          "description": "Timestamp of the last update"
+          "type": "string",
+          "description": "Timestamp of last modification"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of creation"
         }
-      },
-      "required": ["userId"]
+      }
+    },
+    "TestConnection": {
+      "title": "Test Connection",
+      "description": "Diagnostic document used to verify Firestore connectivity on app boot.",
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Connection status marker"
+        }
+      }
     }
   },
   "firestore": {
     "/users/{userId}": {
       "schema": "UserWorkspace",
-      "description": "Stores user state, configurations, and progress data"
+      "description": "Private user workspace state and execution plan"
+    },
+    "/test/{docId}": {
+      "schema": "TestConnection",
+      "description": "Diagnostic connectivity test document"
     }
   }
 }

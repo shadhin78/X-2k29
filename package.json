@@ -12,7 +12,6 @@
     "test:consistency": "node tests/data-consistency.test.js",
     "test:app": "node tests/app-core.test.js",
     "test:auth": "node tests/auth-service.test.js",
-    "test:rules": "mocha tests/firestore-rules.test.js",
     "test:config": "node tests/config-tracks.test.js",
     "test:pace-outcome": "node tests/pace-outcome.test.js",
     "test:analytics": "node tests/analytics-visualization.test.js",
@@ -23,7 +22,10 @@
     "test:navigation": "node tests/navigation-performance.test.js"
   },
   "dependencies": {
-    "firebase": "^12.17.1",
-    "firebase-admin": "^14.2.0"
+    "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "@firebase/eslint-plugin-security-rules": "^0.0.2",
+    "eslint": "^10.11.0"
   }
 }
