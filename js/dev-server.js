@@ -49,12 +49,12 @@ const server = http.createServer((req, res) => {
   if (url === '/api/config') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
-      apiKey: env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
-      authDomain: env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
-      projectId: env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
-      storageBucket: env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
-      messagingSenderId: env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
-      appId: env.NEXT_PUBLIC_FIREBASE_APP_ID || ""
+      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
+      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
+      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || env.NEXT_PUBLIC_FIREBASE_APP_ID || ""
     }));
     return;
   }
@@ -108,11 +108,11 @@ const server = http.createServer((req, res) => {
   });
 });
 
-const PORT = 3000;
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n  ┌─────────────────────────────────────────────────────┐`);
   console.log(`  │  X-29 Dev Server running at:                       │`);
-  console.log(`  │  → http://localhost:${PORT}                          │`);
+  console.log(`  │  → http://0.0.0.0:${PORT}                          │`);
   console.log(`  │                                                     │`);
   console.log(`  │  ⚠  Use ONLY this URL for local development.       │`);
   console.log(`  │     Other ports (5000, 5500, etc.) lack /api/config │`);
