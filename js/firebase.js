@@ -91,12 +91,13 @@ function hasUserData(payload) {
 }
 
 const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyBYadAquEl7BWd8nPy19q6UhDW4FYk3lcs",
+    authDomain: "project-x-2k-29.firebaseapp.com",
+    projectId: "project-x-2k-29",
+    storageBucket: "project-x-2k-29.firebasestorage.app",
+    messagingSenderId: "445936647757",
+    appId: "1:445936647757:web:166e2d905fa7cc62a12604",
+    firestoreDatabaseId: "ai-studio-x2k29-0bea0128-fcaa-4732-97b2-c13b97d4515f"
 };
 window.firebaseConfig = firebaseConfig;
 
@@ -187,45 +188,39 @@ window.FirebaseService = {
             return firebaseConfig;
         }
 
-        // Fast local return: use cached or static config to unblock app boot synchronously
-        let config;
+        try {
+            const res = await fetch('/api/config');
+            if (res.ok) {
+                const freshConfig = await res.json();
+                if (freshConfig && freshConfig.apiKey) {
+                    Object.assign(firebaseConfig, freshConfig);
+                    window.firebaseConfig = firebaseConfig;
+                    safeStorage.setItem('firebaseConfig', JSON.stringify(firebaseConfig));
+                }
+                const serverDateStr = res.headers.get('Date');
+                if (serverDateStr) {
+                    const serverTime = new Date(serverDateStr).getTime();
+                    window.serverTimeOffset = serverTime - Date.now();
+                }
+                return firebaseConfig;
+            }
+        } catch (err) {
+            console.warn("API config fetch notice:", err);
+        }
+
         const cachedConfig = safeStorage.getItem('firebaseConfig');
         if (cachedConfig) {
             try {
                 const parsed = JSON.parse(cachedConfig);
-                // STRICT ISOLATION GUARD: Enforce projectId strictly matches active firebaseConfig
-                if (parsed && parsed.apiKey && parsed.projectId === firebaseConfig.projectId) {
-                    config = parsed;
-                } else {
-                    console.warn("Purged invalid or legacy cached firebaseConfig:", parsed && parsed.projectId);
-                    safeStorage.removeItem('firebaseConfig');
+                if (parsed && parsed.apiKey) {
+                    Object.assign(firebaseConfig, parsed);
                 }
-            } catch(e) {
+            } catch (e) {
                 safeStorage.removeItem('firebaseConfig');
             }
         }
-        if (!config) {
-            config = firebaseConfig;
-            safeStorage.setItem('firebaseConfig', JSON.stringify(config));
-        }
 
-        // Non-blocking background fetch for clock offset & fresh credentials
-        fetch('/api/config').then(async res => {
-            if (!res.ok) return;
-            const freshConfig = await res.json();
-            if (freshConfig && freshConfig.apiKey && freshConfig.projectId === firebaseConfig.projectId) {
-                safeStorage.setItem('firebaseConfig', JSON.stringify(freshConfig));
-            }
-            const serverDateStr = res.headers.get('Date');
-            if (serverDateStr) {
-                const serverTime = new Date(serverDateStr).getTime();
-                window.serverTimeOffset = serverTime - Date.now();
-            }
-        }).catch(err => {
-            console.warn("Background config fetch notice:", err);
-        });
-
-        return config || firebaseConfig;
+        return firebaseConfig;
     },
 
     // 2. Initialize Firebase Client App and Firestore reference
@@ -242,7 +237,22 @@ window.FirebaseService = {
                     firebase.initializeApp(finalConfig);
                 }
                 if (typeof firebase.firestore === 'function') {
-                    AppState.db = firebase.firestore();
+                    const dbId = finalConfig.firestoreDatabaseId && finalConfig.firestoreDatabaseId !== '(default)'
+                        ? finalConfig.firestoreDatabaseId
+                        : undefined;
+                    let dbInstance = null;
+                    if (dbId && typeof firebase.app === 'function') {
+                        try {
+                            dbInstance = firebase.app().firestore(dbId);
+                        } catch (e) {
+                            console.warn("Custom database instance notice:", e);
+                        }
+                    }
+                    if (!dbInstance) {
+                        dbInstance = firebase.firestore();
+                    }
+                    AppState.db = dbInstance;
+
                     if (!this._firestoreInitialized) {
                         try {
                             AppState.db.enablePersistence({ synchronizeTabs: true }).catch(err => {
@@ -253,6 +263,15 @@ window.FirebaseService = {
                             console.warn("Could not set Firestore settings:", e);
                         }
                     }
+
+                    // Test Firestore connection on boot
+                    try {
+                        AppState.db.collection('users').doc('connection_check').get({ source: 'server' }).catch(err => {
+                            if (err && err.message && err.message.includes('the client is offline')) {
+                                console.warn("Firestore connectivity notice: client is offline or rules restricted.");
+                            }
+                        });
+                    } catch (testErr) {}
                 }
                 console.log("Firebase initialized successfully with project:", finalConfig.projectId);
             } catch (initErr) {

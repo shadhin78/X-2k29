@@ -108,8 +108,7 @@
             }
 
             const fb = typeof global.firebase !== 'undefined' ? global.firebase : (typeof firebase !== 'undefined' ? firebase : null);
-            const hasFirebaseConfig = Boolean(global.firebaseConfig && global.firebaseConfig.apiKey && global.firebaseConfig.projectId);
-            if (fb && fb.auth && hasFirebaseConfig) {
+            if (fb && typeof fb.auth === 'function') {
                 try {
                     await fb.auth().setPersistence(fb.auth.Auth.Persistence.LOCAL);
                     const res = await fb.auth().signInWithEmailAndPassword(cleanEmail, password);

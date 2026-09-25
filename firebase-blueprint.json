@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "UserWorkspace": {
+      "title": "User Workspace",
+      "description": "User personal workspace tracking study, targets, routines, and performance metrics",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Identifier of the user workspace"
+        },
+        "tasks": {
+          "type": "array",
+          "description": "List of user study tasks"
+        },
+        "tracks": {
+          "type": "array",
+          "description": "List of active tracks"
+        },
+        "syllabusStructure": {
+          "type": "object",
+          "description": "Structure of syllabus topics and chapters"
+        },
+        "dailyTargetsDatabase": {
+          "type": "object",
+          "description": "Target records for daily actions"
+        },
+        "weeklyTargetsDatabase": {
+          "type": "object",
+          "description": "Target records for weekly actions"
+        },
+        "monthlyTargetsDatabase": {
+          "type": "object",
+          "description": "Target records for monthly actions"
+        },
+        "scheduleBlocks": {
+          "type": "array",
+          "description": "Daily schedule blocks"
+        },
+        "timerLogs": {
+          "type": "array",
+          "description": "Logged focus time intervals"
+        },
+        "examSessions": {
+          "type": "array",
+          "description": "Upcoming or logged exam sessions"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp of the last update"
+        }
+      },
+      "required": ["userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserWorkspace",
+      "description": "Stores user state, configurations, and progress data"
+    }
+  }
+}
