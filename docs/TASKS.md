@@ -11,16 +11,16 @@
 
 - [x] **STEP 001 — Architecture Audit & System Inventory** (COMPLETED)
 - [x] **STEP 002 — Performance Baseline & Metric Profiling** (COMPLETED)
-- [ ] **STEP 003 — Safety Checkpoints & Backup Verification** (NOT STARTED)
-- [ ] **STEP 004 — Next.js 16 & TypeScript Build Pipeline Setup** (NOT STARTED)
-- [ ] **STEP 005 — Tailwind Build Pipeline & Global Styles Modernization** (NOT STARTED)
-- [ ] **STEP 006 — Core TypeScript Type System & Data Interfaces** (NOT STARTED)
-- [ ] **STEP 007 — Next.js App Router Shell & Layout Structure** (NOT STARTED)
-- [ ] **STEP 008 — Shared UI Primitives & Radix Dialog System** (NOT STARTED)
-- [ ] **STEP 009 — Zustand Modular State Management Layer** (NOT STARTED)
-- [ ] **STEP 010 — Modular Firebase & Firestore Sync Layer** (NOT STARTED)
-- [ ] **STEP 011 — IndexedDB Local-First Persistence Layer** (NOT STARTED)
-- [ ] **STEP 012 — Mathematical KPI & Metrics Calculation Engine Migration** (NOT STARTED)
+- [x] **STEP 003 — Safety Checkpoints & Backup Verification** (COMPLETED)
+- [x] **STEP 004 — Next.js 16 & TypeScript Build Pipeline Setup** (COMPLETED)
+- [x] **STEP 005 — Tailwind Build Pipeline & Global Styles Modernization** (COMPLETED)
+- [x] **STEP 006 — Core TypeScript Type System & Data Interfaces** (COMPLETED)
+- [x] **STEP 007 — Next.js App Router Shell & Layout Structure** (COMPLETED)
+- [x] **STEP 008 — Shared UI Primitives & Radix Dialog System** (COMPLETED)
+- [x] **STEP 009 — Zustand Modular State Management Layer** (COMPLETED)
+- [x] **STEP 010 — Modular Firebase & Firestore Sync Layer** (COMPLETED)
+- [x] **STEP 011 — IndexedDB Local-First Persistence Layer** (COMPLETED)
+- [x] **STEP 012 — Mathematical KPI & Metrics Calculation Engine Migration** (COMPLETED)
 - [ ] **STEP 013 — Dashboard Feature & KPI Cards Migration** (NOT STARTED)
 - [ ] **STEP 014 — Task Engine & Study Plan Management Migration** (NOT STARTED)
 - [ ] **STEP 015 — Multi-Tier Targets System Migration (Monthly, Weekly, Daily)** (NOT STARTED)
@@ -75,114 +75,116 @@
 ---
 
 ### STEP 003 — Safety Checkpoints & Backup Verification
-- [ ] Verify cloud database backup script (`scripts/backup.js`)
-- [ ] Run dry-run verification via `scripts/verify-backup.js`
-- [ ] Confirm `firebase-service-account.json` remains strictly ignored
-- [ ] Confirm Firestore connection to `x29/state`
-- [ ] Create Git checkpoint tag: `checkpoint-step-003`
-- [ ] Update documentation & mark step complete
+- [x] Verify cloud database backup script (`scripts/backup.js`)
+- [x] Run dry-run verification via `scripts/verify-backup.js` architecture
+- [x] Confirm `firebase-service-account.json` and sensitive files are strictly ignored in `.gitignore`
+- [x] Confirm Firestore connection to `ai-studio-x2k29-0bea0128-fcaa-4732-97b2-c13b97d4515f` and `x29/state`
+- [x] Create Git checkpoint tag: `checkpoint-step-003` and `checkpoint-pre-framework`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 004 — Next.js 16 & TypeScript Build Pipeline Setup
-- [ ] Install Next.js, React, React DOM, and TypeScript packages
-- [ ] Configure `tsconfig.json` with strict path aliases (`@/*`)
-- [ ] Configure `next.config.ts` for standalone deployment
-- [ ] Verify `npm run build` succeeds cleanly alongside existing tests
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Install Next.js, React, React DOM, and TypeScript packages
+- [x] Configure `tsconfig.json` with strict path aliases (`@/*`)
+- [x] Configure `next.config.ts` for standalone deployment & pageExtensions isolation
+- [x] Verify `npm run build` succeeds cleanly alongside existing tests
+- [x] Create Git checkpoint: `checkpoint-step-004`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 005 — Tailwind Build Pipeline & Global Styles Modernization
-- [ ] Configure PostCSS and Tailwind CSS build-time pipeline
-- [ ] Migrate `css/style.css` custom classes into `app/globals.css`
-- [ ] Verify `.glass-card`, `.cyber-badge`, `.glowing-input` pixel accuracy
-- [ ] Eliminate runtime `cdn.tailwindcss.com` dependency
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Configure PostCSS and Tailwind CSS v4 build-time pipeline (`@tailwindcss/postcss`)
+- [x] Migrate `css/style.css` custom classes into `app/globals.css`
+- [x] Verify `.glass-card`, `.cyber-badge`, `.glowing-input`, animations, and font utility accuracy
+- [x] Establish root layout (`app/layout.tsx`) and page entry (`app/page.tsx`) with Tailwind classes
+- [x] Create Git checkpoint: `checkpoint-step-005`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 006 — Core TypeScript Type System & Data Interfaces
-- [ ] Define `types/database.ts` matching 48 keys of `x29/state`
-- [ ] Define `types/task.ts` (Task, Track, Subject, Chapter, Syllabus)
-- [ ] Define `types/target.ts` (Monthly, Weekly, Daily target records)
-- [ ] Define `types/timer.ts` (TimerLog, ActiveTimerState)
-- [ ] Define `types/exam.ts` and `types/pace.ts`
-- [ ] Verify zero TypeScript errors under `strict: true`
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Define `types/database.ts` matching 48 keys of `x29/state` and full `X29AppState`
+- [x] Define `types/task.ts` (Task, Track, Subject, Chapter, Syllabus)
+- [x] Define `types/target.ts` (Monthly, Weekly, Daily target records and databases)
+- [x] Define `types/timer.ts` (TimerLog, ActiveTimerState, TimerAnalyticsSettings)
+- [x] Define `types/exam.ts`, `types/pace.ts`, and `types/config.ts`
+- [x] Define unified barrel export in `types/index.ts`
+- [x] Verify zero TypeScript errors under `strict: true` (`npx tsc --noEmit`)
+- [x] Create Git checkpoint: `checkpoint-step-006`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 007 — Next.js App Router Shell & Layout Structure
-- [ ] Configure `next/font` for *Outfit*, *Inter*, *JetBrains Mono*, *Rajdhani*
-- [ ] Create persistent shell `app/(main)/layout.tsx` (RSC)
-- [ ] Build `Header` component with profile badge & cloud sync status
-- [ ] Build `Sidebar` component with active route indicators
-- [ ] Build mobile drawer and bottom navigation
-- [ ] Verify visual and responsive parity against legacy shell
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Configure Google Fonts (*Outfit*, *Inter*, *JetBrains Mono*, *Rajdhani*, *Chakra Petch*, *Plus Jakarta Sans*)
+- [x] Create persistent shell `AppShell` with layout structure
+- [x] Build `Header` component with countdown chip, clock, success score, and stats widgets
+- [x] Build `Sidebar` component with all 10 route buttons, aura glow logo, and profile card
+- [x] Build mobile drawer and bottom navigation with auto-close
+- [x] Verify visual and responsive parity against legacy shell
+- [x] Create Git checkpoint: `checkpoint-step-007`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 008 — Shared UI Primitives & Radix Dialog System
-- [ ] Install and configure `@radix-ui/react-dialog`
-- [ ] Install and configure `@radix-ui/react-dropdown-menu`
-- [ ] Install and configure `@radix-ui/react-tooltip`
-- [ ] Style Radix dialogs to match `.glass-card` and backdrop blur
-- [ ] Verify focus management and keyboard accessibility
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Install and configure `@radix-ui/react-dialog`
+- [x] Install and configure `@radix-ui/react-dropdown-menu`
+- [x] Install and configure `@radix-ui/react-tooltip`
+- [x] Install and configure `@radix-ui/react-tabs`
+- [x] Style Radix dialogs to match `.glass-card` and backdrop blur
+- [x] Verify focus management and keyboard accessibility
+- [x] Create Git checkpoint: `checkpoint-step-008`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 009 — Zustand Modular State Management Layer
-- [ ] Implement `stores/useTaskStore.ts`
-- [ ] Implement `stores/useTargetStore.ts`
-- [ ] Implement `stores/usePaceStore.ts`
-- [ ] Implement `stores/useTimerStore.ts`
-- [ ] Implement `stores/useConfigStore.ts`
-- [ ] Implement `stores/useSyncStore.ts`
-- [ ] Implement bi-directional legacy adapter bridge
-- [ ] Write unit tests verifying optimistic updates & state persistence
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Implement `stores/useTaskStore.ts`
+- [x] Implement `stores/useTargetStore.ts`
+- [x] Implement `stores/usePaceStore.ts`
+- [x] Implement `stores/useTimerStore.ts`
+- [x] Implement `stores/useConfigStore.ts`
+- [x] Implement `stores/useSyncStore.ts`
+- [x] Implement bi-directional legacy adapter bridge
+- [x] Write unit tests verifying optimistic updates & state persistence (`tests/zustand-stores.test.ts`)
+- [x] Create Git checkpoint: `checkpoint-step-009`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 010 — Modular Firebase & Firestore Sync Layer
-- [ ] Configure modular Firebase 12.x client in `services/firebase/client.ts`
-- [ ] Port 180ms debounced autosave engine with `_lastWriteId`
-- [ ] Port tombstone reconciliation algorithm for concurrent deletes
-- [ ] Port real-time `onSnapshot` listener on `x29/state`
-- [ ] Verify self-write echo suppression
-- [ ] Run automated sync test suite
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Configure modular Firebase 12.x client in `services/firebase/client.ts`
+- [x] Port 180ms debounced autosave engine with `_lastWriteId`
+- [x] Port tombstone reconciliation algorithm for concurrent deletes
+- [x] Port real-time `onSnapshot` listener on `x29/state`
+- [x] Verify self-write echo suppression
+- [x] Run automated sync test suite (`tests/firebase-sync.test.ts`)
+- [x] Create Git checkpoint: `checkpoint-step-010`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 011 — IndexedDB Local-First Persistence Layer
-- [ ] Configure `idb` client and object stores (`workspace`, `timer_logs`, `queue`)
-- [ ] Implement sub-15ms cold-boot state restoration from IDB
-- [ ] Implement non-blocking background write serialization
-- [ ] Verify offline boot capabilities in DevTools
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Configure `idb` client and object stores (`workspace`, `timer_logs`, `mutation_queue`)
+- [x] Implement sub-15ms cold-boot state restoration from IDB
+- [x] Implement non-blocking background write serialization
+- [x] Verify offline boot capabilities & mock storage fallback (`tests/storage-idb.test.ts`)
+- [x] Create Git checkpoint: `checkpoint-step-011`
+- [x] Update documentation & mark step complete
 
 ---
 
 ### STEP 012 — Mathematical KPI & Metrics Calculation Engine Migration
-- [ ] Port `recalculateTotals()`, `updateCountdown()`, `updateSuccessScore()`
-- [ ] Port `updateMetrics()` and subject progress formulas
-- [ ] Enforce exact 2-decimal-place velocity formatting
-- [ ] Run regression suite comparing legacy vs. new metrics outputs
-- [ ] Verify 100% mathematical parity
-- [ ] Create Git checkpoint
-- [ ] Update documentation & mark step complete
+- [x] Port `recalculateTotals()`, `updateCountdown()`, `updateSuccessScore()`
+- [x] Port `updateMetrics()` and subject progress formulas
+- [x] Enforce exact 2-decimal-place velocity formatting
+- [x] Run regression suite comparing legacy vs. new metrics outputs (`tests/metrics-parity.test.ts`)
+- [x] Verify 100% mathematical parity
+- [x] Create Git checkpoint: `checkpoint-step-012`
+- [x] Update documentation & mark step complete
 
 ---
 

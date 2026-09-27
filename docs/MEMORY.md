@@ -8,32 +8,26 @@
 ---
 
 ## Current Step
-- **Current Step:** STEP 002 — Performance Baseline & Metric Profiling (COMPLETED).
-- **Status:** READY FOR STEP 003.
+- **Current Step:** STEP 012 — Mathematical KPI & Metrics Calculation Engine Migration (COMPLETED).
+- **Status:** READY FOR STEP 013.
 
 ---
 
 ## Previous Completed Step
-- **Previous Completed Step:** STEP 001 — Architecture Audit & System Inventory.
+- **Previous Completed Step:** STEP 011 — IndexedDB Local-First Persistence Layer.
 
 ---
 
 ## What Was Changed
-- Conducted full architectural and code audit of the entire 168-file X-29 repository.
-- Cataloged exact byte counts, line counts, and responsibilities for all 106 JS files (3.02 MB), 13 HTML files (1.01 MB), and 13 CSS files (52.2 KB).
-- Executed all automated regression test suites (`npm test`) — 14 test suites, 57/57 tests passed.
-- Initialized clean Git tracking with author configuration and created root commit `fd26c21`.
-- Built the complete permanent 9-document migration governance system in `docs/`:
-  1. `docs/CURRENT-STATE.md` (Comprehensive audit of architecture, files, problems, dependencies)
-  2. `docs/MODERNIZATION-PLAN.md` (Complete 36-step roadmap with detailed workflows)
-  3. `docs/ARCHITECTURE.md` (Baseline vs. Target Next.js 16/React 19/TypeScript architecture)
-  4. `docs/RULES.md` (Strict 15 non-negotiable rules, zero redesign rule)
-  5. `docs/DESIGN-PARITY.md` (Checklist covering all 11 views and 40 modals)
-  6. `docs/TASKS.md` (Detailed task tracker for every step)
-  7. `docs/MEMORY.md` (Cross-session memory ledger)
-  8. `docs/PERFORMANCE.md` (Performance tracking baseline and targets)
-  9. `docs/MIGRATION-LOG.md` (Chronological history of migration actions)
-- Verified build and lint integrity (`compile_applet` build succeeded, `lint_applet` passed).
+- STEP 012 Execution:
+  1. Created `types/metrics.ts` establishing strict domain interfaces for `SubjectMetricStat`, `CountdownMetric`, `SuccessScoreMetric`, `GlobalPaceMetric`, and `ComputedMetricsSummary`.
+  2. Created `lib/metrics.ts` implementing pure mathematical calculation algorithms (`calculateTotalStaticChapters`, `calculateCountdown`, `calculateSuccessScore`, `calculateSubjectStats`, `calculateGlobalPace`, `calculateAllMetrics`, `formatPace`, `formatCgpa`) with 100% mathematical parity against legacy `js/core/metrics.js`.
+  3. Created comprehensive regression test suite in `tests/metrics-parity.test.ts` verifying static chapter totals, countdown boundaries, success score percentages, custom milestone calculations, per-subject velocity computation, and 2-decimal-place formatters.
+  4. Added `test:metrics` script and integrated into `npm test`.
+  5. Verified zero TypeScript errors under `strict: true` (`npx tsc --noEmit`).
+  6. Verified `compile_applet` (`next build` compiled cleanly in Turbopack).
+  7. Verified all automated test suites pass (14 legacy suites + Zustand suite + Firebase sync suite + Storage IDB suite + Metrics parity suite).
+  8. Verified `lint_applet` passed cleanly.
 
 ---
 
@@ -93,14 +87,24 @@
 
 ## Git Checkpoint
 - **Branch:** `master`
-- **Baseline Commit:** `fd26c21` (`chore: baseline commit before modernization`)
-- **Working Tree Status:** Documentation added; ready for next checkpoint.
+- **Baseline Commit:** `5dcf35b` (`chore: baseline checkpoint before technology modernization (STEP 003)`)
+- **Step 004 Commit:** `94d53ef` (`feat: setup Next.js 16 and TypeScript build pipeline (STEP 004)`)
+- **Step 005 Commit:** `135b856` (`feat: setup Tailwind CSS v4 build pipeline and global styles (STEP 005)`)
+- **Step 006 Commit:** `f735f94` (`feat: implement core TypeScript type system and domain interfaces (STEP 006)`)
+- **Step 007 Commit:** `11e158f` (`feat: implement Next.js App Router shell and layout structure (STEP 007)`)
+- **Step 008 Commit:** `411cf8b` (`feat: implement accessible shared Radix UI primitives (STEP 008)`)
+- **Step 009 Commit:** `c337942` (`feat: implement Zustand modular state management layer and legacy bridge (STEP 009)`)
+- **Step 010 Commit:** `70ced1c` (`feat: implement modular Firebase and Firestore sync layer with tombstone reconciliation (STEP 010)`)
+- **Step 011 Commit:** `e50cee6` (`feat: implement IndexedDB local-first persistence layer with fallback support (STEP 011)`)
+- **Step 012 Commit:** `e786312` (`feat: implement pure TypeScript KPI metrics calculation engine with mathematical parity (STEP 012)`)
+- **Tags:** `checkpoint-step-003`, `checkpoint-pre-framework`, `checkpoint-step-004`, `checkpoint-step-005`, `checkpoint-step-006`, `checkpoint-step-007`, `checkpoint-step-008`, `checkpoint-step-009`, `checkpoint-step-010`, `checkpoint-step-011`, `checkpoint-step-012`
+- **Working Tree Status:** Clean, verified, and protected.
 
 ---
 
 ## Next Step
 - **Awaiting User Instruction:**
   ```text
-  Continue from STEP 003
+  Continue from STEP 013
   ```
-  *(STEP 003: Safety Checkpoints & Backup Verification)*
+  *(STEP 013: Dashboard Feature & KPI Cards Migration)*

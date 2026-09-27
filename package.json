@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "node js/dev-server.js",
     "start": "node server.js",
-    "build": "echo 'Build complete'",
+    "build": "next build",
     "lint": "node --check js/dev-server.js server.js",
-    "test": "node tests/firestore-rules.test.js && node tests/final-verification.test.js && node tests/config-tracks.test.js && node tests/pace-outcome.test.js && node tests/analytics-visualization.test.js && node tests/daily-targets.test.js && node tests/weekly-targets.test.js && node tests/monthly-targets.test.js && node tests/tasks-metrics-dashboard.test.js && node tests/app-core.test.js && node tests/modals.test.js && node tests/data-consistency.test.js && node tests/navigation-performance.test.js && node tests/initial-route.test.js",
+    "test": "node tests/firestore-rules.test.js && node tests/final-verification.test.js && node tests/config-tracks.test.js && node tests/pace-outcome.test.js && node tests/analytics-visualization.test.js && node tests/daily-targets.test.js && node tests/weekly-targets.test.js && node tests/monthly-targets.test.js && node tests/tasks-metrics-dashboard.test.js && node tests/app-core.test.js && node tests/modals.test.js && node tests/data-consistency.test.js && node tests/navigation-performance.test.js && node tests/initial-route.test.js && bun test tests/zustand-stores.test.ts && bun test tests/firebase-sync.test.ts && bun test tests/storage-idb.test.ts && bun test tests/metrics-parity.test.ts && bun test tests/dashboard-components.test.ts",
+    "test:zustand": "bun test tests/zustand-stores.test.ts",
+    "test:firebase": "bun test tests/firebase-sync.test.ts",
+    "test:storage": "bun test tests/storage-idb.test.ts",
+    "test:metrics": "bun test tests/metrics-parity.test.ts",
+    "test:dashboard": "bun test tests/dashboard-components.test.ts",
     "test:final": "node tests/final-verification.test.js",
     "test:consistency": "node tests/data-consistency.test.js",
     "test:app": "node tests/app-core.test.js",
@@ -23,10 +28,29 @@
     "test:initial-route": "node tests/initial-route.test.js"
   },
   "dependencies": {
-    "firebase": "^12.19.0"
+    "@radix-ui/react-dialog": "^1.1.23",
+    "@radix-ui/react-dropdown-menu": "^2.1.24",
+    "@radix-ui/react-tabs": "^1.1.21",
+    "@radix-ui/react-tooltip": "^1.2.16",
+    "@tailwindcss/postcss": "^4.3.3",
+    "clsx": "^2.1.1",
+    "firebase": "^12.19.0",
+    "idb": "^8.0.3",
+    "lucide-react": "^1.48.0",
+    "next": "^16.3.6",
+    "postcss": "^8.5.28",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@firebase/eslint-plugin-security-rules": "^0.0.2",
-    "eslint": "^10.11.0"
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.11.0",
+    "typescript": "^7.0.2"
   }
 }

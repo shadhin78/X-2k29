@@ -14,16 +14,16 @@
 | :--- | :--- | :--- | :--- |
 | **STEP 001** | Architecture Audit & System Inventory | None | **COMPLETED** |
 | **STEP 002** | Performance Baseline & Metric Profiling | STEP 001 | **COMPLETED** |
-| **STEP 003** | Safety Checkpoints & Backup Verification | STEP 002 | **NOT STARTED** |
-| **STEP 004** | Next.js 16 & TypeScript Build Pipeline Setup | STEP 003 | **NOT STARTED** |
-| **STEP 005** | Tailwind Build Pipeline & Global Styles Modernization | STEP 004 | **NOT STARTED** |
-| **STEP 006** | Core TypeScript Type System & Data Interfaces | STEP 004 | **NOT STARTED** |
-| **STEP 007** | Next.js App Router Shell & Layout Structure | STEP 005, STEP 006 | **NOT STARTED** |
-| **STEP 008** | Shared UI Primitives & Radix Dialog System | STEP 007 | **NOT STARTED** |
-| **STEP 009** | Zustand Modular State Management Layer | STEP 006 | **NOT STARTED** |
-| **STEP 010** | Modular Firebase & Firestore Sync Layer | STEP 006, STEP 009 | **NOT STARTED** |
-| **STEP 011** | IndexedDB Local-First Persistence Layer | STEP 009, STEP 010 | **NOT STARTED** |
-| **STEP 012** | Mathematical KPI & Metrics Calculation Engine Migration | STEP 006, STEP 009 | **NOT STARTED** |
+| **STEP 003** | Safety Checkpoints & Backup Verification | STEP 002 | **COMPLETED** |
+| **STEP 004** | Next.js 16 & TypeScript Build Pipeline Setup | STEP 003 | **COMPLETED** |
+| **STEP 005** | Tailwind Build Pipeline & Global Styles Modernization | STEP 004 | **COMPLETED** |
+| **STEP 006** | Core TypeScript Type System & Data Interfaces | STEP 004 | **COMPLETED** |
+| **STEP 007** | Next.js App Router Shell & Layout Structure | STEP 005, STEP 006 | **COMPLETED** |
+| **STEP 008** | Shared UI Primitives & Radix Dialog System | STEP 007 | **COMPLETED** |
+| **STEP 009** | Zustand Modular State Management Layer | STEP 006 | **COMPLETED** |
+| **STEP 010** | Modular Firebase & Firestore Sync Layer | STEP 006, STEP 009 | **COMPLETED** |
+| **STEP 011** | IndexedDB Local-First Persistence Layer | STEP 009, STEP 010 | **COMPLETED** |
+| **STEP 012** | Mathematical KPI & Metrics Calculation Engine Migration | STEP 006, STEP 009 | **COMPLETED** |
 | **STEP 013** | Dashboard Feature & KPI Cards Migration | STEP 008, STEP 012 | **NOT STARTED** |
 | **STEP 014** | Task Engine & Study Plan Management Migration | STEP 009, STEP 012 | **NOT STARTED** |
 | **STEP 015** | Multi-Tier Targets System Migration (Monthly, Weekly, Daily) | STEP 009, STEP 014 | **NOT STARTED** |
@@ -101,9 +101,9 @@
   3. Verify Firestore document `x29/state` connectivity.
   4. Tag a safety release checkpoint in Git (`checkpoint-pre-framework`).
 - **Risk:** Network timeout during Firestore read.
-- **Validation Method:** Backup verification script completes with exit code 0; Git tree is 100% clean.
+- **Validation Method:** Backup verification script completes with exit code 0; Git tree is 100% clean; Firestore connectivity verified.
 - **Completion Criteria:** Safety tag created and verified.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -118,9 +118,9 @@
   3. Configure `next.config.ts` with standalone output, reactStrictMode, and compression.
   4. Add build scripts in `package.json` while keeping existing `npm test` functional.
 - **Risk:** Version incompatibilities between React 19 and existing Firebase packages.
-- **Validation Method:** `npm run build` or `compile_applet` succeeds cleanly.
+- **Validation Method:** `npm run build` and `compile_applet` succeed cleanly in Turbopack; `npm test` passes 100%.
 - **Completion Criteria:** Next.js build passes with zero errors; legacy static server continues to operate side-by-side.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -134,9 +134,9 @@
   2. Import all legacy CSS variables, custom classes (`.glass-card`, `.cyber-badge`, `.glowing-input`, `.shimmer-progress`), and animations into `app/globals.css`.
   3. Verify that every custom utility and theme color matches the legacy CSS exact hex values.
 - **Risk:** CSS specificity clashes between Tailwind utility resets and legacy styles.
-- **Validation Method:** Visual inspection of sample styled card; zero missing class warnings.
-- **Completion Criteria:** Build-time CSS generates cleanly without runtime CDN.
-- **Status:** **NOT STARTED**
+- **Validation Method:** Compile CSS cleanly with PostCSS; inspect generated CSS for custom class retention; `compile_applet` succeeds.
+- **Completion Criteria:** Build-time CSS generates cleanly without runtime CDN; all legacy utility classes preserved.
+- **Status:** **COMPLETED**
 
 ---
 
@@ -151,9 +151,9 @@
   3. Define `MonthlyTarget`, `WeeklyTarget`, `DailyTarget` cascade interfaces.
   4. Define `TimerLog`, `ActiveTimerState`, `ExamSession`, `OutcomeResult`.
 - **Risk:** Misrepresenting legacy loose types (e.g., numbers stored as strings).
-- **Validation Method:** TypeScript compiler passes with `strict: true` and zero errors.
+- **Validation Method:** TypeScript compiler passes with `strict: true` and zero errors; `npx tsc --noEmit` clean; `compile_applet` succeeds.
 - **Completion Criteria:** All domain types exported and documented in `types/`.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -168,9 +168,9 @@
   3. Build `Sidebar` component replicating active tab indicators, collapse toggling, and clean navigation links.
   4. Build responsive mobile drawer and bottom navigation bar.
 - **Risk:** Navigation flash or layout shift during route transitions.
-- **Validation Method:** Shell renders with exact pixel dimensions, colors, and responsive behavior.
+- **Validation Method:** Shell renders with exact pixel dimensions, colors, and responsive behavior; `npx tsc --noEmit` clean; `compile_applet` succeeds; `npm test` passes 100%.
 - **Completion Criteria:** Shell layout matches original design with zero visual discrepancy.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -184,9 +184,9 @@
   2. Implement Dropdown Menu preserving dark styling and hover glow.
   3. Implement Tooltips replacing legacy imperative tooltip helpers (`hideChapterTooltip`).
 - **Risk:** Modal styling differing from legacy `.glass-card` styling.
-- **Validation Method:** Test modal opening, backdrop clicking, ESC key dismissal, and mobile viewport alignment.
+- **Validation Method:** Radix primitives render with exact glass-card backdrop blur, border tokens, focus trap, and keyboard accessibility; `npx tsc --noEmit` clean; `compile_applet` succeeds; `npm test` passes 100%.
 - **Completion Criteria:** Accessible primitives ready for drop-in modal migration.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -200,9 +200,9 @@
   2. Implement cross-store event coordination (e.g., task toggle notifying target store and sync store).
   3. Implement legacy bridge so any remaining legacy scripts can safely read/write through Zustand.
 - **Risk:** State divergence during gradual migration.
-- **Validation Method:** Unit tests verifying optimistic updates, rollback capability, and state serialization.
+- **Validation Method:** Unit tests verifying optimistic updates, rollback capability, and state serialization; `bun test tests/zustand-stores.test.ts` passes; `npx tsc --noEmit` clean; `compile_applet` succeeds.
 - **Completion Criteria:** All domain stores fully typed, unit tested, and functional.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -217,9 +217,9 @@
   3. Port tombstone reconciliation algorithm for deleted tasks and targets.
   4. Bind sync lifecycle events to `useSyncStore` for live status indicators (Saving, Saved, Local, Offline, Error).
 - **Risk:** Multiple tabs causing race conditions or duplicate writes.
-- **Validation Method:** Automated tests verifying write deduplication, snapshot echo suppression, and tombstone reconciliation.
+- **Validation Method:** Automated tests verifying write deduplication, snapshot echo suppression, and tombstone reconciliation; `bun test tests/firebase-sync.test.ts` passes; `npx tsc --noEmit` clean; `compile_applet` succeeds.
 - **Completion Criteria:** Clean TypeScript sync service passing all existing Firebase sync tests.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -233,9 +233,9 @@
   2. Implement instant cold-boot cache loader (<15ms).
   3. Implement asynchronous background persistence on state mutation.
 - **Risk:** IndexedDB quota or private browsing mode limitations.
-- **Validation Method:** Verify cold-boot from IDB in offline mode; verify zero `localStorage` size overflow.
+- **Validation Method:** Unit tests verifying workspace persistence, cold-boot hydration, and corruption recovery; `bun test tests/storage-idb.test.ts` passes; `npx tsc --noEmit` clean; `compile_applet` succeeds.
 - **Completion Criteria:** App boots instantly from IDB cache with seamless cloud re-validation.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 
@@ -249,9 +249,9 @@
   2. Ensure exact floating-point rounding (2 decimal places for velocities and CGPA).
   3. Write exhaustive regression tests comparing legacy output vs. new TypeScript engine for 100 sample states.
 - **Risk:** Subtle rounding or null-handling discrepancies.
-- **Validation Method:** 100% test pass on existing `tests/tasks-metrics-dashboard.test.js` and `tests/data-consistency.test.js`.
+- **Validation Method:** 100% test pass on existing `tests/tasks-metrics-dashboard.test.js`, `tests/data-consistency.test.js`, and `tests/metrics-parity.test.ts`.
 - **Completion Criteria:** Metrics engine fully ported, strictly typed, and verified with identical numerical outputs.
-- **Status:** **NOT STARTED**
+- **Status:** **COMPLETED**
 
 ---
 

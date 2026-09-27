@@ -1,1 +1,14 @@
 node_modules
+.next
+out
+dist
+build
+*.log
+.DS_Store
+firebase-service-account.json
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.tsbuildinfo
