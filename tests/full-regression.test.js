@@ -31,7 +31,7 @@ function check(label, condition, detail = '') {
 console.log('--- A. RUNNING ALL 9 SPECIALIZED UNIT & INTEGRATION SUITES ---');
 
 const suites = [
-    { name: '1. Authentication Service Suite', cmd: 'node tests/auth-service.test.js' },
+    { name: '1. Private Single-User & Sync Suite', cmd: 'node tests/final-verification.test.js' },
     { name: '2. Config & Tracks System Suite', cmd: 'node tests/config-tracks.test.js' },
     { name: '3. Pace & Outcome Engine Suite', cmd: 'node tests/pace-outcome.test.js' },
     { name: '4. Analytics & Visualization Suite', cmd: 'node tests/analytics-visualization.test.js' },
@@ -59,16 +59,14 @@ suites.forEach(s => {
 console.log('\n--- B. CORE APPLICATION CHECKS ---');
 const indexHtml = fs.readFileSync('index.html', 'utf8');
 const appJs = fs.readFileSync('js/core/app.js', 'utf8');
-const authJs = fs.readFileSync('js/services/auth.js', 'utf8');
 const fbJs = fs.readFileSync('js/firebase.js', 'utf8');
 
 check('Core: Application starts via Native ES Module entry point', indexHtml.includes('type="module" src="/js/core/app.js"'));
-check('Core: Authentication service supports login, logout, and getCurrentUser', authJs.includes('login:') && authJs.includes('logout:') && authJs.includes('getCurrentUser:'));
-check('Core: Admin route guard enforces ris2k29@gmail.com', appJs.includes('ris2k29@gmail.com'));
-check('Core: Logout flow exists and redirects to login.html', authJs.includes('logout') && authJs.includes('login.html'));
+check('Core: Single-user workspace initialized directly without login page', !fs.existsSync('login.html') && appJs.includes('initWorkspace'));
+check('Core: Fixed single-user Firestore synchronization (x29/state)', fbJs.includes("x29") && fbJs.includes("state"));
 check('Core: Navigation & page router registration present', fs.existsSync('router/router.js') && appJs.includes('initNavigation'));
 check('Core: Firebase connectivity, configuration & cloud methods', fbJs.includes('fetchConfig') && fbJs.includes('init') && fbJs.includes('saveToCloud'));
-check('Core: Cloud data loading and state hydration flow', fbJs.includes('loadFromCloud') || appJs.includes('initAuth'));
+check('Core: Cloud data loading and state hydration flow', fbJs.includes('loadFromCloud') && appJs.includes('initWorkspace'));
 check('Core: Data saving mechanism wired to state changes', fbJs.includes('saveToCloud'));
 
 // -------------------------------------------------------------
@@ -152,7 +150,7 @@ check('Settings: Priority configurations reordering & persistence', priorityConf
 console.log('\n--- I. MOBILE RESPONSIVENESS CHECKS ---');
 const sidebarJs = fs.readFileSync('js/shared/sidebar.js', 'utf8');
 
-check('Mobile: Responsive viewport meta tag in index.html & login.html', 
+check('Mobile: Responsive viewport meta tag in index.html', 
     indexHtml.includes('name="viewport"') && indexHtml.includes('width=device-width'));
 check('Mobile: Mobile sidebar toggle button (#mobile-sidebar-toggle)', indexHtml.includes('id="mobile-sidebar-toggle"'));
 check('Mobile: Mobile sidebar backdrop (#sidebar-backdrop)', indexHtml.includes('id="sidebar-backdrop"'));

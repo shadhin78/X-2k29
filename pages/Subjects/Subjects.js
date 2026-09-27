@@ -7,6 +7,10 @@
 (function () {
     'use strict';
 
+    const AppState = (typeof window !== 'undefined' && window.AppState)
+        ? window.AppState
+        : ((typeof global !== 'undefined' && global.AppState) ? global.AppState : { tasks: [], currentFilter: 'All' });
+
     // Page-specific state variables
     window.subjectDetailsState = window.subjectDetailsState || {};
 
@@ -360,7 +364,10 @@
         }
     });
 
-    AppState.tasks.forEach(t => {
+    const currentTasks = (AppState && Array.isArray(AppState.tasks))
+        ? AppState.tasks
+        : ((typeof window !== 'undefined' && window.AppState && Array.isArray(window.AppState.tasks)) ? window.AppState.tasks : []);
+    currentTasks.forEach(t => {
         if (t.type === 'study') {
             window.tracks.forEach(trackObj => {
                 const trackId = trackObj.id;

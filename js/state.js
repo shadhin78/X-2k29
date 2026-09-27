@@ -147,6 +147,10 @@ if (!_root.AppState) {
 };
 }
 
+if (typeof window !== 'undefined') window.AppState = _root.AppState;
+if (typeof global !== 'undefined') global.AppState = _root.AppState;
+if (typeof globalThis !== 'undefined') globalThis.AppState = _root.AppState;
+
 // Define transparent properties on window to alias AppState keys
 const stateKeys = [
     'appState', 'tracks', 'timerLogs', 'dailyFocusHoursTarget', 'dailyFocusHoursTargetDate', 'dailyFocusHoursTargetHistory', 'timerAnalyticsRange', 'timerAnalyticsGrouping', 'timerAnalyticsChartStyle', 'spectraHeatmapRange', 'sessionHistoryFilter', 'activeTimerState', 'timerInterval', 'db',

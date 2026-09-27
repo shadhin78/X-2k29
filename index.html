@@ -27,12 +27,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Firebase Compat & ESM Imports -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script type="importmap">
     {
       "imports": {
         "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
         "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
       }
     }
@@ -49,7 +47,6 @@
     <script src="js/shared/modals.js?v=1.0.1"></script>
     <script src="js/shared/sidebar.js?v=1.0.1"></script>
     <script src="js/services/backup.js?v=1.0.16"></script>
-    <script src="js/services/auth.js?v=1.0.1"></script>
     <script src="js/state.js?v=1.0.17"></script>
     <script src="js/firebase.js?v=1.0.16"></script>
     <script src="shared/services/timerService.js?v=1.0.16"></script>
@@ -356,27 +353,15 @@
                             class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors group">
                             <div id="profile-avatar"
                                 class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white uppercase text-sm shrink-0 shadow-sm">
-                                R
+                                X
                             </div>
                             <div class="flex-1 min-w-0">
                                 <span id="profile-name"
-                                    class="block text-xs font-black truncate text-slate-800 dark:text-slate-200">ris2k29</span>
+                                    class="block text-xs font-black truncate text-slate-800 dark:text-slate-200">X-29</span>
                                 <span id="profile-email"
-                                    class="block text-[9px] font-semibold text-slate-400 truncate">ris2k29@gmail.com</span>
+                                    class="block text-[9px] font-semibold text-slate-400 truncate">Private Workspace</span>
                             </div>
                         </div>
-
-
-                        <!-- Logout Button -->
-                        <button id="btn-logout" data-logout-btn
-                            class="w-full bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-600 border border-slate-200 dark:border-slate-800 px-4 py-3 rounded-2xl font-black text-xs text-rose-500 transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-sm">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Logout
-                        </button>
                     </div>
                 </div>
             </div>
@@ -7112,10 +7097,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h2 class="text-xl font-black text-slate-800 dark:text-slate-100">Account Settings</h2>
-                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Manage
-                                user
-                                details & authentication</p>
+                            <h2 class="text-xl font-black text-slate-800 dark:text-slate-100">Workspace Settings</h2>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Private single-user workspace</p>
                         </div>
                     </div>
                     <button data-modal-close="account-settings-modal"
@@ -7129,15 +7112,8 @@
 
                 <div class="space-y-4 my-2">
                     <div class="flex flex-col gap-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Display
-                            Name:</label>
-                        <input type="text" id="account-input-name"
-                            class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-blue-500 outline-none w-full shadow-inner" />
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Email
-                            Address:</label>
-                        <input type="email" id="account-input-email"
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Workspace Label:</label>
+                        <input type="text" id="account-input-name" value="X-29"
                             class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-blue-500 outline-none w-full shadow-inner" />
                     </div>
                 </div>
@@ -7146,23 +7122,11 @@
                     <div class="flex items-center justify-end gap-3 shrink-0">
                         <button data-modal-close="account-settings-modal"
                             class="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-200 active:scale-95 transition-all">
-                            Cancel
+                            Close
                         </button>
-                        <button id="asm-save-btn"
+                        <button id="asm-save-btn" data-modal-close="account-settings-modal"
                             class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-black uppercase tracking-wider text-white active:scale-95 transition-all shadow-md">
-                            Save Details
-                        </button>
-                    </div>
-                    <div class="border-t border-dashed border-slate-200 dark:border-slate-700 pt-4">
-                        <!-- Relocated Logout button -->
-                        <button id="btn-logout-relocated" 
-                            class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/20 dark:hover:bg-rose-950/40 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/30 px-4 py-3 rounded-2xl font-black text-xs transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-sm">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Logout from Application
+                            Save
                         </button>
                     </div>
                 </div>

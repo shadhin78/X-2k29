@@ -102,20 +102,15 @@ const OperationType = {
 window.OperationType = OperationType;
 
 function handleFirestoreError(error, operationType, path) {
-    const auth = (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') ? firebase.auth() : null;
-    const currentUser = auth ? auth.currentUser : null;
     const errInfo = {
         error: error instanceof Error ? error.message : String(error),
         authInfo: {
-            userId: currentUser?.uid || null,
-            email: currentUser?.email || null,
-            emailVerified: currentUser?.emailVerified || null,
-            isAnonymous: currentUser?.isAnonymous || null,
-            tenantId: currentUser?.tenantId || null,
-            providerInfo: currentUser?.providerData?.map(provider => ({
-                providerId: provider.providerId,
-                email: provider.email,
-            })) || []
+            userId: null,
+            email: null,
+            emailVerified: null,
+            isAnonymous: null,
+            tenantId: null,
+            providerInfo: []
         },
         operationType,
         path
@@ -248,262 +243,54 @@ window.FirebaseService = {
         console.log("Firebase service initialized in cloud mode for project: " + ((window.firebaseConfig && window.firebaseConfig.projectId) || 'project-x-2k-29'));
     },
 
-    // 3. Authenticate with Email / Password (delegated to AuthService)
-    login: async function(email, password) {
-        if (typeof window !== 'undefined' && window.AuthService && typeof window.AuthService.login === 'function') {
-            return window.AuthService.login(email, password);
-        }
-
-        const cleanEmail = (email || '').trim().toLowerCase();
-
-        if (window.location.protocol === 'file:') {
-            console.log("Firebase login mocked under file:// protocol.");
-            if (cleanEmail === 'ris2k29@gmail.com' && password === '787898') {
-                const localUser = { email: 'ris2k29@gmail.com', uid: 'file_protocol_local_user', displayName: 'ris2k29 (Local)' };
-                safeStorage.setItem('local_auth_user', JSON.stringify(localUser));
-                this._notifyAuthListeners(localUser);
-                return { user: localUser };
-            }
-            throw { code: 'auth/wrong-password', message: 'Invalid email or password.' };
-        }
-
-        const hasFirebaseConfig = Boolean(window.firebaseConfig && window.firebaseConfig.apiKey && window.firebaseConfig.projectId);
-        if (typeof firebase !== 'undefined' && firebase.auth && hasFirebaseConfig) {
-            try {
-                await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-                const res = await firebase.auth().signInWithEmailAndPassword(cleanEmail, password);
-                if (res && res.user) {
-                    const userObj = {
-                        email: res.user.email,
-                        uid: res.user.uid,
-                        displayName: res.user.displayName || res.user.email
-                    };
-                    safeStorage.setItem('local_auth_user', JSON.stringify(userObj));
-                    this._notifyAuthListeners(res.user);
-                }
-                return res;
-            } catch (fbErr) {
-                console.warn("Firebase Auth sign-in failed:", fbErr);
-                if (cleanEmail === 'ris2k29@gmail.com' && password === '787898') {
-                    const localUser = { email: 'ris2k29@gmail.com', uid: 'local_admin_user', displayName: 'ris2k29' };
-                    safeStorage.setItem('local_auth_user', JSON.stringify(localUser));
-                    this._notifyAuthListeners(localUser);
-                    return { user: localUser };
-                }
-                throw fbErr;
-            }
-        }
-
-        if (cleanEmail === 'ris2k29@gmail.com' && password === '787898') {
-            const localUser = { email: 'ris2k29@gmail.com', uid: 'local_admin_user', displayName: 'ris2k29' };
-            safeStorage.setItem('local_auth_user', JSON.stringify(localUser));
-            this._notifyAuthListeners(localUser);
-            return { user: localUser };
-        }
-
-        throw { code: 'auth/wrong-password', message: 'Invalid email or password.' };
-    },
-
-    _notifyAuthListeners: function(user) {
-        if (typeof window !== 'undefined' && window.AuthService && typeof window.AuthService._notifyAuthListeners === 'function') {
-            window.AuthService._notifyAuthListeners(user);
-        }
-        if (this._authListeners && this._authListeners.length > 0) {
-            this._authListeners.forEach(cb => {
-                try { cb(user); } catch(e) {}
-            });
-        }
-    },
-
-    bumpSyncGeneration: function(reason) {
-        if (!AppState.syncGeneration) AppState.syncGeneration = 0;
-        AppState.syncGeneration++;
-        AppState.syncSessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-        console.log(`SYNC_DEBUG GENERATION_CHANGED: (${reason}) -> New Gen: ${AppState.syncGeneration}`);
-        console.log(`SYNC_DEBUG SESSION_CHANGED: (${reason}) -> New SessionID: ${AppState.syncSessionId}`);
-        return AppState.syncGeneration;
-    },
-
-    // 4. Log out the current session (delegated to AuthService)
-    logout: async function() {
-        console.log("SYNC: LOGOUT_INITIATED");
-        if (typeof window !== 'undefined' && window.AuthService && typeof window.AuthService.logout === 'function') {
-            return window.AuthService.logout();
-        }
-
-        this.stopSnapshotListener("logout");
-        this.bumpSyncGeneration("logout");
-
-        if (this._saveDebounceTimer) {
-            clearTimeout(this._saveDebounceTimer);
-            this._saveDebounceTimer = null;
-            console.log("SYNC: SAVE_CANCELLED (logout)");
-        }
-
-        // Purge ALL user-specific application data from browser storage
-        const keysToRemove = [
-            'local_app_state',
-            'appState',
-            'cached_fullAppState',
-            'cached_examSessions',
-            'cached_examRoutine',
-            'cached_selectedCountdownExamId',
-            'local_auth_user'
-        ];
-        keysToRemove.forEach(k => safeStorage.removeItem(k));
-
-        try {
-            if (typeof sessionStorage !== 'undefined') {
-                sessionStorage.clear();
-            }
-        } catch(e) {}
-
-        // Reset memory AppState to clean empty default
-        if (typeof window.applyFullAppState === 'function' && typeof window.getDefaultAppState === 'function') {
-            window.applyFullAppState(window.getDefaultAppState(), false, true);
-        }
-
-        this.cloudDocumentExists = null;
-        if (window.AppState) {
-            window.AppState.cloudDocumentExists = null;
-            window.AppState.hasLoadedFromCloud = false;
-            window.AppState.isLocalDirty = false;
-        }
-
-        console.log("SYNC: LOGOUT_CACHE_CLEARED - All user cache and memory state purged.");
-        this._notifyAuthListeners(null);
-
-        if (window.location.protocol === 'file:') {
-            console.log("Firebase logout mocked under file:// protocol.");
-            return;
-        }
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-            try {
-                await firebase.auth().signOut();
-            } catch (e) {
-                console.warn("Firebase signOut error:", e);
-            }
-        }
-    },
-
-    // 5. Expose current authenticated user reference (delegated to AuthService)
-    getCurrentUser: function() {
-        if (typeof window !== 'undefined' && window.AuthService && typeof window.AuthService.getCurrentUser === 'function') {
-            return window.AuthService.getCurrentUser();
-        }
-
-        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-            return firebase.auth().currentUser;
-        }
-        const cached = safeStorage.getItem('local_auth_user');
-        if (cached) {
-            try {
-                const user = JSON.parse(cached);
-                if (user && user.uid && user.uid !== 'mock-local-user-id') {
-                    return user;
-                }
-            } catch(e) {}
-        }
-        if (window.location.protocol === 'file:') {
-            return { email: 'ris2k29@gmail.com', uid: 'file_protocol_local_user', displayName: 'ris2k29 (Local)' };
-        }
-        return null;
-    },
-
-    // 6. Auth State Changes Listener (delegated to AuthService)
+    // Safe no-op auth stubs (authentication completely removed for private single-user mode)
+    login: async function() { return true; },
+    logout: async function() { return true; },
+    getCurrentUser: function() { return { displayName: 'X-29 User' }; },
     onAuthStateChanged: function(callback) {
-        if (typeof window !== 'undefined' && window.AuthService && typeof window.AuthService.onAuthStateChanged === 'function') {
-            return window.AuthService.onAuthStateChanged(callback);
+        if (typeof callback === 'function') {
+            setTimeout(() => callback({ displayName: 'X-29 User' }), 10);
         }
-
-        if (!this._authListeners) this._authListeners = [];
-        this._authListeners.push(callback);
-
-        if (window.location.protocol === 'file:') {
-            console.log("file:// protocol detected in onAuthStateChanged.");
-            setTimeout(() => {
-                callback({
-                    email: 'ris2k29@gmail.com',
-                    uid: 'file_protocol_local_user',
-                    displayName: 'ris2k29 (Local)'
-                });
-            }, 100);
-            return () => {
-                this._authListeners = this._authListeners.filter(cb => cb !== callback);
-            };
-        }
-
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-            const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                    safeStorage.setItem('local_auth_user', JSON.stringify({
-                        email: user.email,
-                        uid: user.uid,
-                        displayName: user.displayName || user.email
-                    }));
-                    callback(user);
-                } else {
-                    safeStorage.removeItem('local_auth_user');
-                    callback(null);
-                }
-            });
-            return () => {
-                this._authListeners = this._authListeners.filter(cb => cb !== callback);
-                if (typeof unsubscribe === 'function') unsubscribe();
-            };
-        } else {
-            const localUser = this.getCurrentUser();
-            setTimeout(() => callback(localUser), 50);
-            return () => {
-                this._authListeners = this._authListeners.filter(cb => cb !== callback);
-            };
-        }
+        return () => {};
     },
 
     stopSnapshotListener: function(reason = "manual") {
         if (this._unsubscribeSnapshot) {
-            const user = this.getCurrentUser();
-            const uid = user ? user.uid : 'unknown';
-            console.log(`SYNC_DEBUG LISTENER_STOP: UID=${uid}, Reason=${reason}, Timestamp=${Date.now()}`);
+            console.log(`SYNC_DEBUG LISTENER_STOP: Path=x29/state, Reason=${reason}, Timestamp=${Date.now()}`);
             try { this._unsubscribeSnapshot(); } catch(e) {}
             this._unsubscribeSnapshot = null;
         }
     },
 
-    // 7. Register Firestore Real-time Snapshot Listener
-    startSnapshotListener: function(uid, onData, onError) {
+    bumpSyncGeneration: function(reason = "unknown") {
+        if (!AppState.syncGeneration) AppState.syncGeneration = 0;
+        AppState.syncGeneration++;
+        AppState.syncSessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        console.log(`SYNC_DEBUG BUMP_GENERATION: NewGen=${AppState.syncGeneration}, SessionID=${AppState.syncSessionId}, Reason=${reason}`);
+        return AppState.syncGeneration;
+    },
+
+    // 7. Register Firestore Real-time Snapshot Listener for fixed x29/state
+    startSnapshotListener: function(onData, onError) {
         this.stopSnapshotListener("startNewListener");
 
-        let activeUid = null;
-        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-            activeUid = firebase.auth().currentUser.uid;
-        } else if (uid && uid !== 'mock-local-user-id') {
-            activeUid = uid;
-        }
-
-        if (!AppState.db || !activeUid || window.location.protocol === 'file:') {
-            console.warn(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=DB_NULL_OR_UNAUTH UID=${activeUid}`);
+        if (!AppState.db || window.location.protocol === 'file:') {
+            console.warn(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=DB_NULL_OR_FILE`);
             return function unsubscribe() {};
         }
 
         const captureGen = AppState.syncGeneration || 0;
         const captureSessionId = AppState.syncSessionId || "";
         console.log(`SYNC: FIREBASE_PROJECT: ${firebaseConfig.projectId}`);
-        console.log(`SYNC: AUTH_UID: ${activeUid}`);
+        console.log(`SYNC: FIRESTORE_PATH: x29/state`);
         console.log(`SYNC: FIRESTORE_CONNECTED: true`);
-        console.log(`SYNC_DEBUG FIRESTORE_PATH: users/${activeUid}`);
-        console.log(`SYNC_DEBUG LISTENER_START: UID=${activeUid}`);
-        console.log(`SYNC: LISTENER_START - UID: ${activeUid}, Generation: ${captureGen}, SessionID: ${captureSessionId}, Timestamp: ${Date.now()}`);
-        console.log(`SYNC_DEBUG LISTENER_UID: ${activeUid}`);
-        console.log(`SYNC_DEBUG LISTENER_GENERATION: ${captureGen}`);
-        console.log(`SYNC: LISTENER_GENERATION - Active Generation: ${captureGen}, Current AppState Gen: ${AppState.syncGeneration}, Timestamp: ${Date.now()}`);
-        console.log(`SYNC_DEBUG LISTENER_SESSION: ${captureSessionId}`);
+        console.log(`SYNC_DEBUG LISTENER_START: Gen=${captureGen}, SessionID=${captureSessionId}, Timestamp=${Date.now()}`);
 
         try {
-            const userDocRef = AppState.db.collection('users').doc(activeUid);
+            const stateDocRef = AppState.db.collection('x29').doc('state');
 
-            const unsubscribe = userDocRef.onSnapshot((docSnapshot) => {
-                console.log(`SYNC_DEBUG SNAPSHOT_RECEIVED: UID=${activeUid}, Gen=${captureGen}, Timestamp=${Date.now()}`);
+            const unsubscribe = stateDocRef.onSnapshot((docSnapshot) => {
+                console.log(`SYNC_DEBUG SNAPSHOT_RECEIVED: Gen=${captureGen}, Timestamp=${Date.now()}`);
 
                 if (captureGen !== (AppState.syncGeneration || 0)) {
                     console.warn(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=STALE_GENERATION (Captured: ${captureGen}, Current: ${AppState.syncGeneration})`);
@@ -527,14 +314,16 @@ window.FirebaseService = {
                     return;
                 }
 
-                if (docSnapshot.exists) {
-                    console.log(`SYNC_DEBUG SNAPSHOT_EXISTS: true`);
+                const docExists = docSnapshot && ((typeof docSnapshot.exists === 'function') ? docSnapshot.exists() : Boolean(docSnapshot.exists));
+                const cloudData = docSnapshot ? ((typeof docSnapshot.data === 'function') ? docSnapshot.data() : docSnapshot.data) : null;
+
+                if (docExists && cloudData) {
+                    console.log(`SYNC_DEBUG SNAPSHOT_EXISTS: true (x29/state)`);
                     this.cloudDocumentExists = true;
                     if (window.AppState) window.AppState.cloudDocumentExists = true;
 
-                    const cloudData = docSnapshot.data();
                     let cloudTime = 0;
-                    if (cloudData && cloudData.updatedAt) {
+                    if (cloudData.updatedAt) {
                         if (typeof cloudData.updatedAt === 'number') {
                             cloudTime = cloudData.updatedAt;
                         } else if (typeof cloudData.updatedAt.toMillis === 'function') {
@@ -547,7 +336,7 @@ window.FirebaseService = {
 
                     // SELF-WRITE ECHO GUARD: If this snapshot represents our own write that just committed,
                     // acknowledge it instantly without re-parsing, reconciling, or re-rendering the DOM!
-                    if (AppState.hasLoadedFromCloud && cloudData && cloudData._lastWriteId && (cloudData._lastWriteId === this._lastCommittedWriteId || cloudData._lastWriteId === this._inFlightWriteId)) {
+                    if (AppState.hasLoadedFromCloud && cloudData._lastWriteId && (cloudData._lastWriteId === this._lastCommittedWriteId || cloudData._lastWriteId === this._inFlightWriteId)) {
                         console.log(`SYNC_DEBUG SNAPSHOT_SELF_ECHO_ACKNOWLEDGED: WriteId=${cloudData._lastWriteId}`);
                         if (cloudTime > 0) {
                             AppState.lastAppliedCloudTimestamp = Math.max(AppState.lastAppliedCloudTimestamp || 0, cloudTime);
@@ -559,17 +348,8 @@ window.FirebaseService = {
                         return;
                     }
 
-                    const incomingTaskIds = Array.isArray(cloudData.tasks) ? cloudData.tasks.map(t => window.generateItemId(t, 'tasks')) : [];
+                    const incomingTaskIds = (cloudData.tasks && Array.isArray(cloudData.tasks)) ? cloudData.tasks.map(t => window.generateItemId(t, 'tasks')) : [];
                     console.log(`SYNC_DEBUG INCOMING_TASK_IDS: ${JSON.stringify(incomingTaskIds)}`);
-                    console.log(`SYNC_DEBUG SNAPSHOT_ARRAY_LENGTHS: ${JSON.stringify({
-                        tasks: (cloudData.tasks || []).length,
-                        tracks: (cloudData.tracks || []).length,
-                        customActions: (cloudData.customActions || []).length,
-                        paceGoals: (cloudData.paceGoals || []).length,
-                        timerLogs: (cloudData.timerLogs || []).length,
-                        scheduleBlocks: (cloudData.scheduleBlocks || []).length,
-                        examSessions: (cloudData.examSessions || []).length
-                    })}`);
 
                     if (AppState.isLocalDirty) {
                         const lastApplied = AppState.lastAppliedCloudTimestamp || 0;
@@ -580,7 +360,6 @@ window.FirebaseService = {
                         }
 
                         console.log(`SYNC_DEBUG RECONCILE_START: Merging local dirty state with incoming cloud snapshot`);
-                        console.warn(`SYNC: CONFLICT_DETECTED - Remote cloud snapshot timestamp (${cloudTime}) > last applied (${AppState.lastAppliedCloudTimestamp || 0}) while local client state is dirty.`);
                         const tombstones = Object.assign({}, AppState._tombstones || {}, cloudData._tombstones || {});
                         AppState._tombstones = tombstones;
 
@@ -590,8 +369,6 @@ window.FirebaseService = {
                             if (Array.isArray(cloudData[key]) || Array.isArray(AppState[key])) {
                                 cloudData[key] = window.reconcileArrays(AppState[key] || [], cloudData[key] || [], tombstones, key);
                             }
-                            const resultCount = (cloudData[key] || []).length;
-                            console.log(`SYNC_DEBUG RECONCILE_RESULT (${key}): Local=${localCount}, Cloud=${cloudCount}, Result=${resultCount}`);
                         });
 
                         if (cloudData.passedItems || AppState.passedItems) {
@@ -636,7 +413,6 @@ window.FirebaseService = {
                                 });
 
                                 cloudData[dbKey] = mergedDb;
-                                console.log(`SYNC_DEBUG RECONCILE_RESULT (${dbKey}): Reconciled target database across ${allKeys.size} date groups`);
                             }
                         });
 
@@ -681,7 +457,6 @@ window.FirebaseService = {
 
                             if (localTimer && localTime > cloudTime && (AppState.isLocalDirty || isRunning)) {
                                 cloudData.activeTimerState = localTimer;
-                                console.log(`SYNC_DEBUG RECONCILE_RESULT (activeTimerState): Preserving newer local timer state (${localTime} > ${cloudTime})`);
                             } else if (cloudTimer) {
                                 cloudData.activeTimerState = cloudTimer;
                             }
@@ -711,9 +486,9 @@ window.FirebaseService = {
                             onData(cloudData, { exists: true });
                         }
                     }
-                    console.log(`SYNC_DEBUG SNAPSHOT_APPLIED: UID=${activeUid}`);
+                    console.log(`SYNC_DEBUG SNAPSHOT_APPLIED: x29/state`);
                 } else {
-                    console.warn(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=CLOUD_DOCUMENT_MISSING UID=${activeUid}`);
+                    console.warn(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=CLOUD_DOCUMENT_MISSING x29/state`);
                     if (this._saveDebounceTimer) {
                         clearTimeout(this._saveDebounceTimer);
                         this._saveDebounceTimer = null;
@@ -726,11 +501,11 @@ window.FirebaseService = {
                     }
                 }
             }, (error) => {
-                console.error(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=FIRESTORE_ERROR UID=${activeUid}`, error);
+                console.error(`SYNC_DEBUG SNAPSHOT_REJECTED: reason=FIRESTORE_ERROR`, error);
                 showSync('error');
                 if (error && (error.code === 'permission-denied' || (error.message && error.message.includes('insufficient permissions')))) {
                     try {
-                        handleFirestoreError(error, OperationType.GET, `users/${activeUid}`);
+                        handleFirestoreError(error, OperationType.GET, `x29/state`);
                     } catch (e) {}
                 }
                 if (typeof onError === 'function') {
@@ -748,9 +523,8 @@ window.FirebaseService = {
     },
 
     _syncDiagnostic: async function() {
-        const user = this.getCurrentUser();
-        if (!user || !user.uid || !AppState.db) {
-            console.warn("SYNC_DEBUG DIAGNOSTIC_ABORTED: No authenticated user or DB instance");
+        if (!AppState.db) {
+            console.warn("SYNC_DEBUG DIAGNOSTIC_ABORTED: No DB instance");
             return null;
         }
         const diagnosticPayload = {
@@ -760,16 +534,16 @@ window.FirebaseService = {
                 timestamp: Date.now()
             }
         };
-        console.log(`SYNC_DEBUG DIAGNOSTIC_WRITE_START: UID=${user.uid}`);
+        console.log(`SYNC_DEBUG DIAGNOSTIC_WRITE_START: Path=x29/state`);
         try {
-            await AppState.db.collection('users').doc(user.uid).set(diagnosticPayload, { merge: true });
+            await AppState.db.collection('x29').doc('state').set(diagnosticPayload, { merge: true });
         } catch (diagErr) {
             if (diagErr && (diagErr.code === 'permission-denied' || (diagErr.message && diagErr.message.includes('insufficient permissions')))) {
-                handleFirestoreError(diagErr, OperationType.WRITE, `users/${user.uid}`);
+                handleFirestoreError(diagErr, OperationType.WRITE, `x29/state`);
             }
             throw diagErr;
         }
-        console.log(`SYNC_DEBUG DIAGNOSTIC_WRITE_SUCCESS: UID=${user.uid}`);
+        console.log(`SYNC_DEBUG DIAGNOSTIC_WRITE_SUCCESS: Path=x29/state`);
         return diagnosticPayload._syncDiagnostic;
     },
 
@@ -780,25 +554,11 @@ window.FirebaseService = {
         AppState.isLocalDirty = true;
         this._lastLocalEditTime = Date.now() + (window.serverTimeOffset || 0);
 
-        const user = this.getCurrentUser();
         const gen = AppState.syncGeneration || 0;
 
-        // Missing Document Protection: If no authenticated user exists, block save.
-        // If authenticated user exists and document does not exist yet in cloud, auto-initialize on first write.
+        // Auto-initialize cloud document if not yet created
         if (this.cloudDocumentExists === false && !isExplicitInitialization) {
-            if (!user || !user.uid) {
-                if (this._saveDebounceTimer) {
-                    clearTimeout(this._saveDebounceTimer);
-                    this._saveDebounceTimer = null;
-                }
-                console.warn(`SYNC: SAVE_BLOCKED_NO_CLOUD_DOCUMENT - UID: none, SaveGen: ${gen}, Timestamp: ${Date.now()}`);
-                console.warn("SYNC: WRITE_BLOCKED", { reason: "NO_AUTH_USER", uid: null });
-                showSync('uninitialized');
-                return;
-            } else {
-                console.log(`SYNC: FIRST_WRITE_AUTO_INIT - Document users/${user.uid} will be created on save.`);
-                isExplicitInitialization = true;
-            }
+            isExplicitInitialization = true;
         }
 
         // Fast synchronous local storage persist (0ms latency local safety)
@@ -845,15 +605,6 @@ window.FirebaseService = {
             return;
         }
 
-        // GUARD 2: Verify authenticated user
-        const user = this.getCurrentUser();
-        if (!user || !user.uid) {
-            console.warn("SYNC_DEBUG SAVE_ABORTED: reason=NO_AUTH_UID");
-            console.warn("SYNC: WRITE_BLOCKED", { reason: "NO_AUTH_UID", uid: null });
-            showSync('saved');
-            return;
-        }
-
         this._isSaving = true;
         AppState.saveStatus = 'saving';
         showSync('saving');
@@ -893,7 +644,7 @@ window.FirebaseService = {
                 AppState.lastLocalPersistTime = Date.now();
             } catch(e) {}
 
-            if (AppState.db && user && user.uid && window.location.protocol !== 'file:') {
+            if (AppState.db && window.location.protocol !== 'file:') {
                 const cleanPayload = jsonStr ? JSON.parse(jsonStr) : JSON.parse(JSON.stringify(payload));
                 const deleteFieldValue = (typeof window !== 'undefined' && window.modularFirebase && typeof window.modularFirebase.deleteField === 'function')
                     ? window.modularFirebase.deleteField()
@@ -948,12 +699,12 @@ window.FirebaseService = {
                     });
                 }
 
-                console.log(`SYNC: WRITE_ATTEMPT - UID: ${user.uid}, SaveGen: ${captureGen}, Rev: ${targetRevision}, WriteId: ${clientWriteId}`);
+                console.log(`SYNC: WRITE_ATTEMPT - Path: x29/state, SaveGen: ${captureGen}, Rev: ${targetRevision}, WriteId: ${clientWriteId}`);
                 try {
-                    await AppState.db.collection('users').doc(user.uid).set(cleanPayload, { merge: true });
+                    await AppState.db.collection('x29').doc('state').set(cleanPayload, { merge: true });
                 } catch (writeErr) {
                     if (writeErr && (writeErr.code === 'permission-denied' || (writeErr.message && writeErr.message.includes('insufficient permissions')))) {
-                        handleFirestoreError(writeErr, OperationType.WRITE, `users/${user.uid}`);
+                        handleFirestoreError(writeErr, OperationType.WRITE, `x29/state`);
                     }
                     throw writeErr;
                 }
@@ -995,7 +746,7 @@ window.FirebaseService = {
                 showSync('saved');
             }
         } catch (err) {
-            console.error("SYNC: WRITE_FAILED", { uid: user.uid, error: err });
+            console.error("SYNC: WRITE_FAILED", { path: "x29/state", error: err });
             if (typeof navigator !== 'undefined' && !navigator.onLine) {
                 AppState.saveStatus = 'offline';
                 showSync('offline');
@@ -1076,14 +827,13 @@ window.FirebaseService = {
             console.log("SYNC: SAVE_CANCELLED (wipeCloudWorkspace)");
         }
 
-        const user = this.getCurrentUser();
-        if (AppState.db && user && user.uid && window.location.protocol !== 'file:') {
+        if (AppState.db && window.location.protocol !== 'file:') {
             try {
-                await AppState.db.collection('users').doc(user.uid).delete();
-                console.log("SYNC: CLOUD_DOCUMENT_DELETED for UID:", user.uid);
+                await AppState.db.collection('x29').doc('state').delete();
+                console.log("SYNC: CLOUD_DOCUMENT_DELETED for x29/state");
             } catch(e) {
                 if (e && (e.code === 'permission-denied' || (e.message && e.message.includes('insufficient permissions')))) {
-                    handleFirestoreError(e, OperationType.DELETE, `users/${user.uid}`);
+                    handleFirestoreError(e, OperationType.DELETE, `x29/state`);
                 }
                 console.warn("Failed to delete Firestore cloud document:", e);
             }
@@ -1107,10 +857,8 @@ window.FirebaseService = {
         this.saveToCloud(true);
     },
 
-    // 9. Load workspace from Cloud with real-time Firestore sync (BOOT / LOCAL STORAGE RULE FIX)
+    // 9. Load workspace from Cloud with real-time Firestore sync (x29/state)
     loadFromCloud: function() {
-        const user = this.getCurrentUser();
-
         this.stopSnapshotListener("loadFromCloud");
         this.bumpSyncGeneration("loadFromCloud");
 
@@ -1152,10 +900,12 @@ window.FirebaseService = {
             if (meta && meta.exists === false) {
                 // DATA SAFETY GUARD: Retain valid local workspace if cloud document is missing/uninitialized
                 if (hasUserData(AppState) || hasUserData(safeStorage.getItem('local_app_state'))) {
-                    console.warn("SYNC: CLOUD_DOC_MISSING_BUT_LOCAL_DATA_EXISTS - Retaining local cached workspace.");
-                    this.cloudDocumentExists = false;
-                    if (window.AppState) window.AppState.cloudDocumentExists = false;
-                    showSync('uninitialized');
+                    console.warn("SYNC: CLOUD_DOC_MISSING_BUT_LOCAL_DATA_EXISTS - Auto-initializing cloud with local workspace.");
+                    this.cloudDocumentExists = true;
+                    if (window.AppState) window.AppState.cloudDocumentExists = true;
+                    showSync('saved');
+                    // Automatically save existing local data to Firestore x29/state
+                    this.saveToCloud(true, true);
                 } else {
                     console.log("SYNC: LOCAL_CACHE_DISCARDED - Cloud document does not exist & local workspace empty.");
                     safeStorage.removeItem('local_app_state');
@@ -1218,8 +968,8 @@ window.FirebaseService = {
             }
         };
 
-        if (AppState.db && user && user.uid && window.location.protocol !== 'file:') {
-            this._unsubscribeSnapshot = this.startSnapshotListener(user.uid, (cloudData, meta) => {
+        if (AppState.db && window.location.protocol !== 'file:') {
+            this._unsubscribeSnapshot = this.startSnapshotListener((cloudData, meta) => {
                 handleDataLoad(cloudData, meta);
             }, (err) => {
                 console.warn("Falling back to local storage due to Firestore listener error:", err);
@@ -1292,19 +1042,5 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
     });
 }
 
-// Register persistence & snapshot teardown hook with AuthService
-if (typeof window !== 'undefined' && window.AuthService && typeof window.AuthService.registerLogoutHook === 'function') {
-    window.AuthService.registerLogoutHook(() => {
-        if (window.FirebaseService) {
-            window.FirebaseService.stopSnapshotListener("logout");
-            window.FirebaseService.bumpSyncGeneration("logout");
-            if (window.FirebaseService._saveDebounceTimer) {
-                clearTimeout(window.FirebaseService._saveDebounceTimer);
-                window.FirebaseService._saveDebounceTimer = null;
-                console.log("SYNC: SAVE_CANCELLED (logout hook)");
-            }
-            window.FirebaseService.cloudDocumentExists = null;
-        }
-    });
-}
+// End of FirebaseService Module
 

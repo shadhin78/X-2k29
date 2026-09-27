@@ -6,39 +6,21 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
     function isValidId(id) {
       return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    function isAdmin() {
-      return isSignedIn() && (
-        (request.auth.token.email == 'ris2k29@gmail.com' && request.auth.token.email_verified == true) ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-      );
     }
 
     // Connectivity verification diagnostic document
     match /test/{docId} {
       allow get: if isValidId(docId);
       allow list: if false;
-      allow write: if isAdmin();
+      allow write: if false;
     }
 
-    // User workspaces: strictly partitioned by userId
-    match /users/{userId} {
-      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+    // Fixed single-user X-29 application data document
+    match /x29/{docId} {
+      allow get, create, update, delete: if isValidId(docId);
       allow list: if false;
-      allow create: if isValidId(userId) && (isOwner(userId) || isAdmin());
-      allow update: if isValidId(userId) && (isOwner(userId) || isAdmin());
-      allow delete: if isValidId(userId) && (isOwner(userId) || isAdmin());
     }
   }
 }

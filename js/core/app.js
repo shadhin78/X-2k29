@@ -1,17 +1,11 @@
 /**
  * X-29 Application Core Entry Point (js/core/app.js)
  * Native ES Module bootstrapper and lifecycle orchestrator.
- *
- * Responsibilities:
- * 1. Initialize core state: AppState verification, hydration, and migration
- * 2. Initialize authentication: Firebase configuration and admin auth route guard
- * 3. Initialize required services: Focus Timer, PWA installation lifecycle, date rollover monitor
- * 4. Initialize navigation: Router binding and page switching
- * 5. Initialize current feature: Initial view mount (Dashboard)
+ * Authentication has been completely removed for this private single-user system.
+ * Directly initializes workspace, loads cloud state, and mounts Dashboard.
  */
 
 import '../state.js';
-import '../services/auth.js';
 import '../services/firebase.js';
 import '../firebase.js';
 import '../../shared/services/timerService.js';
@@ -35,16 +29,15 @@ export const App = {
     },
 
     /**
-     * 2. Initialize authentication and cloud synchronization
+     * 2. Initialize cloud synchronization and workspace data (alias initAuth for compatibility)
      */
     async initAuth() {
-        const authProvider = (typeof window !== 'undefined' && window.AuthService)
-            ? window.AuthService
-            : (typeof window !== 'undefined' ? window.FirebaseService : null);
+        return this.initWorkspace();
+    },
 
-        if (!authProvider) {
-            console.warn('[App] AuthService / FirebaseService unavailable.');
-            return;
+    async initWorkspace() {
+        if (typeof window !== 'undefined' && typeof window.setLoadingProgress === 'function') {
+            window.setLoadingProgress(40, 'Connecting workspace...');
         }
 
         // Fetch config & initialize Firebase
@@ -52,85 +45,53 @@ export const App = {
             if (typeof window !== 'undefined' && window.FirebaseService && typeof window.FirebaseService.fetchConfig === 'function') {
                 const config = await window.FirebaseService.fetchConfig();
                 if (typeof window.setLoadingProgress === 'function') {
-                    window.setLoadingProgress(40, 'Initializing workspace...');
+                    window.setLoadingProgress(60, 'Initializing data sync...');
                 }
                 window.FirebaseService.init(config);
-                if (typeof window.setLoadingProgress === 'function') {
-                    window.setLoadingProgress(55, 'Authenticating session...');
-                }
             }
         } catch (e) {
             console.error('[App] Storage init failed:', e);
         }
 
-        // Auth state observer / Route guard
-        if (typeof authProvider.onAuthStateChanged === 'function') {
-            authProvider.onAuthStateChanged(async (user) => {
-                if (!user) {
-                    if (typeof window !== 'undefined' && window.location) {
-                        window.location.href = 'login.html';
-                    }
-                    return;
-                }
-
-                const userEmail = (user.email || '').trim().toLowerCase();
-                if (userEmail !== 'ris2k29@gmail.com') {
-                    if (typeof authProvider.logout === 'function') {
-                        await authProvider.logout();
-                    }
-                    if (typeof window !== 'undefined' && window.location) {
-                        window.location.href = 'login.html?error=denied';
-                    }
-                    return;
-                }
-
-                // Authorized admin session
-                console.log('[App] Admin authorized:', user.email);
-                if (typeof window !== 'undefined') {
-                    window.currentUser = user;
-                }
-                if (typeof window !== 'undefined' && typeof window.setLoadingProgress === 'function') {
-                    window.setLoadingProgress(70, 'Loading workspace...');
-                }
-
-                // Update user profile DOM elements
-                if (typeof document !== 'undefined') {
-                    const displayName = user.displayName || 'ris2k29';
-                    const displayEmail = user.email;
-
-                    const profileNameEl = document.getElementById('profile-name');
-                    const profileEmailEl = document.getElementById('profile-email');
-                    const profileAvatarEl = document.getElementById('profile-avatar');
-                    if (profileNameEl) profileNameEl.textContent = displayName;
-                    if (profileEmailEl) profileEmailEl.textContent = displayEmail;
-                    if (profileAvatarEl) {
-                        profileAvatarEl.textContent = displayName.charAt(0).toUpperCase();
-                    }
-
-                    // Dismiss loading overlay
-                    if (typeof window !== 'undefined' && typeof window.dismissLoadingScreen === 'function') {
-                        window.dismissLoadingScreen();
-                    } else {
-                        const loadingEl = document.getElementById('auth-loading');
-                        const wrapperEl = document.getElementById('app-wrapper');
-                        if (loadingEl) loadingEl.remove();
-                        if (wrapperEl) wrapperEl.classList.remove('hidden');
-                    }
-                }
-
-                // Subscribe and sync from cloud
-                if (typeof window !== 'undefined' && window.FirebaseService && typeof window.FirebaseService.loadFromCloud === 'function') {
-                    window.FirebaseService.loadFromCloud();
-                }
-
-                if (typeof window !== 'undefined' && window.AppState) {
-                    window.AppState.isAppInitialized = true;
-                }
-
-                // Mount current / initial feature
-                this.initCurrentFeature();
-            });
+        if (typeof window !== 'undefined') {
+            window.currentUser = { displayName: 'X-29' };
         }
+
+        // Update profile header/badge DOM elements if present
+        if (typeof document !== 'undefined') {
+            const profileNameEl = document.getElementById('profile-name');
+            const profileEmailEl = document.getElementById('profile-email');
+            const profileAvatarEl = document.getElementById('profile-avatar');
+            if (profileNameEl) profileNameEl.textContent = 'X-29';
+            if (profileEmailEl) profileEmailEl.textContent = 'Private Workspace';
+            if (profileAvatarEl) profileAvatarEl.textContent = 'X';
+        }
+
+        if (typeof window !== 'undefined' && typeof window.setLoadingProgress === 'function') {
+            window.setLoadingProgress(80, 'Loading workspace...');
+        }
+
+        // Subscribe and sync from cloud
+        if (typeof window !== 'undefined' && window.FirebaseService && typeof window.FirebaseService.loadFromCloud === 'function') {
+            window.FirebaseService.loadFromCloud();
+        }
+
+        if (typeof window !== 'undefined' && window.AppState) {
+            window.AppState.isAppInitialized = true;
+        }
+
+        // Dismiss loading overlay
+        if (typeof window !== 'undefined' && typeof window.dismissLoadingScreen === 'function') {
+            window.dismissLoadingScreen();
+        } else if (typeof document !== 'undefined') {
+            const loadingEl = document.getElementById('auth-loading');
+            const wrapperEl = document.getElementById('app-wrapper');
+            if (loadingEl) loadingEl.remove();
+            if (wrapperEl) wrapperEl.classList.remove('hidden');
+        }
+
+        // Mount current / initial feature
+        this.initCurrentFeature();
     },
 
     /**
@@ -138,18 +99,6 @@ export const App = {
      */
     initServices() {
         if (typeof window === 'undefined' || typeof document === 'undefined') return;
-
-        // Loading screen safety fallback timer (3s max)
-        setTimeout(() => {
-            if (typeof window.dismissLoadingScreen === 'function') {
-                window.dismissLoadingScreen();
-            } else {
-                const loadingEl = document.getElementById('auth-loading');
-                const wrapperEl = document.getElementById('app-wrapper');
-                if (loadingEl) loadingEl.remove();
-                if (wrapperEl) wrapperEl.classList.remove('hidden');
-            }
-        }, 3000);
 
         // Focus Timer Service
         if (window.TimerService && typeof window.TimerService.init === 'function') {
@@ -251,7 +200,7 @@ export const App = {
         this.initCoreState();
         this.initServices();
         this.initNavigation();
-        await this.initAuth();
+        await this.initWorkspace();
     }
 };
 

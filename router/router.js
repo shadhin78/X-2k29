@@ -728,14 +728,6 @@
 
                         // Load script module
                         await this.loadJs(route.jsUrl, route.jsId);
-
-                        // Background idle warmup: mount route once so first user click has 0ms initialization
-                        if (route && typeof route.onMount === 'function' && !route._hasMounted) {
-                            try {
-                                route.onMount();
-                                route._hasMounted = true;
-                            } catch (e) {}
-                        }
                     } catch (err) {
                         console.warn(`[Router] Preload warning for ${key}:`, err);
                     }
@@ -753,6 +745,9 @@
          * Initialize the router and seamlessly mount the initial page.
          */
         init: function () {
+            if (this._isInitialized) return;
+            this._isInitialized = true;
+
             // Bind global switchPage to Router.loadPage
             window.switchPage = (pageId, sectionId) => {
                 return this.loadPage(pageId, sectionId);

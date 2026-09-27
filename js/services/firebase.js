@@ -1,18 +1,11 @@
 /**
  * X-29 Module: services/firebase.js
  * Firebase Modular SDK initialization, Firestore connection validation,
- * authenticated operations, and real-time synchronization.
+ * document operations, and real-time synchronization.
+ * Authentication has been completely removed for this private single-user system.
  */
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence
-} from 'firebase/auth';
 import { 
   initializeFirestore,
   getFirestore, 
@@ -43,7 +36,6 @@ function initFirestoreInstance() {
 }
 
 export const db = initFirestoreInstance();
-export const auth = getAuth(app);
 
 // Operation types enum conforming to specification
 export const OperationType = {
@@ -57,7 +49,6 @@ export const OperationType = {
 
 if (typeof window !== 'undefined') {
   window.OperationType = OperationType;
-  window.firebaseAuth = auth;
   window.firestoreDb = db;
 }
 
@@ -65,19 +56,15 @@ if (typeof window !== 'undefined') {
  * Standardized Firestore error handler throwing JSON context
  */
 export function handleFirestoreError(error, operationType, path) {
-  const currentUser = auth ? auth.currentUser : null;
   const errInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
-      userId: currentUser?.uid || null,
-      email: currentUser?.email || null,
-      emailVerified: currentUser?.emailVerified || null,
-      isAnonymous: currentUser?.isAnonymous || null,
-      tenantId: currentUser?.tenantId || null,
-      providerInfo: currentUser?.providerData?.map(provider => ({
-        providerId: provider.providerId,
-        email: provider.email,
-      })) || []
+      userId: null,
+      email: null,
+      emailVerified: null,
+      isAnonymous: null,
+      tenantId: null,
+      providerInfo: []
     },
     operationType,
     path
@@ -108,34 +95,6 @@ export async function testConnection() {
 testConnection();
 
 /**
- * Sign in using Email / Password
- */
-export async function loginWithEmail(email, password) {
-  try {
-    try {
-      await setPersistence(auth, browserLocalPersistence);
-    } catch (pErr) {}
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    return result;
-  } catch (err) {
-    console.error('[Firebase] Email sign-in error:', err);
-    throw err;
-  }
-}
-
-/**
- * Sign out current session
- */
-export async function logoutUser() {
-  try {
-    await signOut(auth);
-  } catch (err) {
-    console.error('[Firebase] Sign-out error:', err);
-    throw err;
-  }
-}
-
-/**
  * Modular Firestore adapter for backward-compatible document queries
  */
 export function createFirestoreAdapter(customDb = db) {
@@ -159,7 +118,15 @@ export function createFirestoreAdapter(customDb = db) {
             },
             get: async function() {
               try {
-                return await getDoc(docRef);
+                const snap = await getDoc(docRef);
+                const isExist = typeof snap.exists === 'function' ? snap.exists() : Boolean(snap.exists);
+                return {
+                  _rawSnap: snap,
+                  get exists() { return isExist; },
+                  data: () => (typeof snap.data === 'function' ? snap.data() : snap.data),
+                  id: snap.id,
+                  metadata: snap.metadata || { hasPendingWrites: false, fromCache: false }
+                };
               } catch (err) {
                 if (err && (err.code === 'permission-denied' || (err.message && err.message.includes('insufficient permissions')))) {
                   handleFirestoreError(err, OperationType.GET, `${colName}/${docId}`);
@@ -178,7 +145,17 @@ export function createFirestoreAdapter(customDb = db) {
               }
             },
             onSnapshot: function(onNext, onError) {
-              return onSnapshot(docRef, onNext, (err) => {
+              return onSnapshot(docRef, (snap) => {
+                const isExist = typeof snap.exists === 'function' ? snap.exists() : Boolean(snap.exists);
+                const normalizedSnap = {
+                  _rawSnap: snap,
+                  get exists() { return isExist; },
+                  data: () => (typeof snap.data === 'function' ? snap.data() : snap.data),
+                  id: snap.id,
+                  metadata: snap.metadata || { hasPendingWrites: false, fromCache: false }
+                };
+                if (typeof onNext === 'function') onNext(normalizedSnap);
+              }, (err) => {
                 if (err && (err.code === 'permission-denied' || (err.message && err.message.includes('insufficient permissions')))) {
                   try {
                     handleFirestoreError(err, OperationType.GET, `${colName}/${docId}`);
@@ -202,13 +179,17 @@ if (typeof window !== 'undefined') {
   window.modularFirebase = {
     app,
     db,
-    auth,
-    loginWithEmail,
-    logoutUser,
     testConnection,
     serverTimestamp,
     deleteField,
     createFirestoreAdapter
   };
 }
-
+export default {
+  app,
+  db,
+  testConnection,
+  serverTimestamp,
+  deleteField,
+  createFirestoreAdapter
+};

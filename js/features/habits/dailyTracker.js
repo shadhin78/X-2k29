@@ -11,6 +11,10 @@
 (function (global) {
     'use strict';
 
+    const AppState = (typeof window !== 'undefined' && window.AppState)
+        ? window.AppState
+        : ((typeof global !== 'undefined' && global.AppState) ? global.AppState : { tasks: [] });
+
     /**
      * Resolves SVG icon markup based on action keyword or custom icon setting.
      *

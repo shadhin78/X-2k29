@@ -8,10 +8,10 @@
     "start": "node server.js",
     "build": "echo 'Build complete'",
     "lint": "node --check js/dev-server.js server.js",
-    "test": "node tests/auth-service.test.js && node tests/config-tracks.test.js && node tests/pace-outcome.test.js && node tests/analytics-visualization.test.js && node tests/daily-targets.test.js && node tests/weekly-targets.test.js && node tests/monthly-targets.test.js && node tests/tasks-metrics-dashboard.test.js && node tests/app-core.test.js && node tests/modals.test.js && node tests/data-consistency.test.js && node tests/navigation-performance.test.js",
+    "test": "node tests/firestore-rules.test.js && node tests/final-verification.test.js && node tests/config-tracks.test.js && node tests/pace-outcome.test.js && node tests/analytics-visualization.test.js && node tests/daily-targets.test.js && node tests/weekly-targets.test.js && node tests/monthly-targets.test.js && node tests/tasks-metrics-dashboard.test.js && node tests/app-core.test.js && node tests/modals.test.js && node tests/data-consistency.test.js && node tests/navigation-performance.test.js && node tests/initial-route.test.js",
+    "test:final": "node tests/final-verification.test.js",
     "test:consistency": "node tests/data-consistency.test.js",
     "test:app": "node tests/app-core.test.js",
-    "test:auth": "node tests/auth-service.test.js",
     "test:config": "node tests/config-tracks.test.js",
     "test:pace-outcome": "node tests/pace-outcome.test.js",
     "test:analytics": "node tests/analytics-visualization.test.js",
@@ -19,7 +19,8 @@
     "test:weekly": "node tests/weekly-targets.test.js",
     "test:monthly": "node tests/monthly-targets.test.js",
     "test:tasks-metrics-dashboard": "node tests/tasks-metrics-dashboard.test.js",
-    "test:navigation": "node tests/navigation-performance.test.js"
+    "test:navigation": "node tests/navigation-performance.test.js",
+    "test:initial-route": "node tests/initial-route.test.js"
   },
   "dependencies": {
     "firebase": "^12.19.0"

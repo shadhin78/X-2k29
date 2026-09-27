@@ -63,9 +63,9 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Handle clean URLs (e.g. /login -> login.html)
-  if (url === '/login') {
-    url = '/login.html';
+  // Handle clean URLs / direct navigation to index.html
+  if (url === '/login' || url === '/login.html') {
+    url = '/index.html';
   }
 
   // Default to index.html

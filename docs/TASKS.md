@@ -1,391 +1,432 @@
-# X-29 ADVANCE — TECHNICAL MODERNIZATION ROADMAP (TASKS)
+# X-29 ADVANCE — IMPLEMENTATION TASK TRACKER (TASKS)
 
-> **Document Version:** 1.0.0  
-> **Status:** Active / Comprehensive Modernization Roadmap  
-> **Rule:** Implement only ONE phase when instructed. Update checkboxes upon completion.
-
----
-
-## Modernization Phases Summary
-
-* [x] **PHASE 0 — Full Audit** (Current Status: COMPLETED)
-* [ ] **PHASE 1 — Baseline & Safety Checkpoints**
-* [ ] **PHASE 2 — Next.js Foundation**
-* [ ] **PHASE 3 — Clean Routing**
-* [ ] **PHASE 4 — React Component Architecture**
-* [ ] **PHASE 5 — TypeScript Migration**
-* [ ] **PHASE 6 — Shared UI Architecture**
-* [ ] **PHASE 7 — Zustand State Architecture**
-* [ ] **PHASE 8 — Firebase / Firestore Architecture**
-* [ ] **PHASE 9 — IndexedDB / Local-first Layer**
-* [ ] **PHASE 10 — Page-by-Page Migration**
-* [ ] **PHASE 11 — Large File Elimination**
-* [ ] **PHASE 12 — Client JavaScript Reduction**
-* [ ] **PHASE 13 — Performance Optimization**
-* [ ] **PHASE 14 — Mobile Optimization**
-* [ ] **PHASE 15 — Responsive Optimization**
-* [ ] **PHASE 16 — Accessibility**
-* [ ] **PHASE 17 — PWA / Service Worker**
-* [ ] **PHASE 18 — Production Optimization**
-* [ ] **PHASE 19 — Final Regression Testing**
-* [ ] **PHASE 20 — Final Cleanup**
+> **Document Version:** 2.0.0  
+> **Date:** 2026-09-26  
+> **Status:** Active Execution Checklist  
+> **Governing Rule:** Never mark any task or step completed without thorough verification.
 
 ---
 
-## Detailed Phase Workflows
+## Master Checklist (STEP 001 - STEP 036)
+
+- [x] **STEP 001 — Architecture Audit & System Inventory** (COMPLETED)
+- [x] **STEP 002 — Performance Baseline & Metric Profiling** (COMPLETED)
+- [ ] **STEP 003 — Safety Checkpoints & Backup Verification** (NOT STARTED)
+- [ ] **STEP 004 — Next.js 16 & TypeScript Build Pipeline Setup** (NOT STARTED)
+- [ ] **STEP 005 — Tailwind Build Pipeline & Global Styles Modernization** (NOT STARTED)
+- [ ] **STEP 006 — Core TypeScript Type System & Data Interfaces** (NOT STARTED)
+- [ ] **STEP 007 — Next.js App Router Shell & Layout Structure** (NOT STARTED)
+- [ ] **STEP 008 — Shared UI Primitives & Radix Dialog System** (NOT STARTED)
+- [ ] **STEP 009 — Zustand Modular State Management Layer** (NOT STARTED)
+- [ ] **STEP 010 — Modular Firebase & Firestore Sync Layer** (NOT STARTED)
+- [ ] **STEP 011 — IndexedDB Local-First Persistence Layer** (NOT STARTED)
+- [ ] **STEP 012 — Mathematical KPI & Metrics Calculation Engine Migration** (NOT STARTED)
+- [ ] **STEP 013 — Dashboard Feature & KPI Cards Migration** (NOT STARTED)
+- [ ] **STEP 014 — Task Engine & Study Plan Management Migration** (NOT STARTED)
+- [ ] **STEP 015 — Multi-Tier Targets System Migration (Monthly, Weekly, Daily)** (NOT STARTED)
+- [ ] **STEP 016 — Focus Timer & Procedural Audio Engine Migration** (NOT STARTED)
+- [ ] **STEP 017 — Spectra Analytics & Heatmap Visualization Migration** (NOT STARTED)
+- [ ] **STEP 018 — Daily Schedule & Timeblocking Routine Migration** (NOT STARTED)
+- [ ] **STEP 019 — Subjects Syllabus & Chapter Progress Migration** (NOT STARTED)
+- [ ] **STEP 020 — Pace Management & Velocity Estimator Migration** (NOT STARTED)
+- [ ] **STEP 021 — Exam Routine & Countdown Timetable Migration** (NOT STARTED)
+- [ ] **STEP 022 — Outcomes, Celebrations & Passing Grades Migration** (NOT STARTED)
+- [ ] **STEP 023 — Master Config, Tracks & Priority Settings Migration** (NOT STARTED)
+- [ ] **STEP 024 — Habits Tracker & Daily Check-in Migration** (NOT STARTED)
+- [ ] **STEP 025 — 40 Modal Dialogs Full Migration & Parity Verification** (NOT STARTED)
+- [ ] **STEP 026 — Monolithic `index.html` Shell Elimination** (NOT STARTED)
+- [ ] **STEP 027 — Legacy JavaScript Files Decomposition & Pruning** (NOT STARTED)
+- [ ] **STEP 028 — Client JavaScript Reduction & Dynamic Code-Splitting** (NOT STARTED)
+- [ ] **STEP 029 — Firebase Realtime Optimization & Network Batching** (NOT STARTED)
+- [ ] **STEP 030 — Mobile Touch & Low-End Android Optimization** (NOT STARTED)
+- [ ] **STEP 031 — Progressive Web App (PWA) & Serwist Service Worker** (NOT STARTED)
+- [ ] **STEP 032 — Offline Sync & Conflict Resolution Hardening** (NOT STARTED)
+- [ ] **STEP 033 — Accessibility (a11y) & Keyboard Navigation Hardening** (NOT STARTED)
+- [ ] **STEP 034 — Production Build & Bundle Optimization** (NOT STARTED)
+- [ ] **STEP 035 — Full End-to-End Regression Verification** (NOT STARTED)
+- [ ] **STEP 036 — Final Legacy Cleanup & Production Validation** (NOT STARTED)
 
 ---
 
-### PHASE 0 — Full Audit
-* **Goal:** Perform complete, non-destructive inspection of all code, files, dependencies, database rules, tests, and styles. Create permanent AI Project Memory.
-* **Reason:** Ensure total contextual understanding before touching any functional code.
-* **Dependencies:** None.
-* **Files involved:** Entire repository; `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/RULES.md`, `docs/DESIGN.md`, `docs/TASKS.md`, `docs/MEMORY.md`.
-* **Tasks:**
-  - [x] Run directory tree and file size audit across entire workspace.
-  - [x] Identify top large files and modules.
-  - [x] Inspect and run automated regression test suites (`npm test`).
-  - [x] Inspect Firestore security rules (`firestore.rules`) and document schema.
-  - [x] Create and populate all 6 permanent AI memory documents in `docs/`.
-* **Risks:** None (Read-only operations).
-* **Validation:** All 6 documents created; all existing test suites passing (57/57 passed).
-* **Expected result:** Complete permanent context established.
-* **Status:** COMPLETED.
+## Detailed Task Workflows per Step
 
 ---
 
-### PHASE 1 — Baseline & Safety Checkpoints
-* **Goal:** Establish immutable verification points, backup snapshots, and local server baseline metrics.
-* **Reason:** Guarantee a zero-risk rollback path before introducing framework files.
-* **Dependencies:** Phase 0.
-* **Files involved:** `scripts/backup.js`, `scripts/verify-backup.js`, `docs/PERFORMANCE-BASELINE.md`.
-* **Tasks:**
-  - [ ] Execute read-only cloud backup: `node scripts/backup.js`.
-  - [ ] Execute deep backup verification: `node scripts/verify-backup.js`.
-  - [ ] Record Lighthouse and Core Web Vitals baseline scores on current codebase.
-  - [ ] Commit Git checkpoint: `chore: establish pre-modernization safety checkpoint`.
-* **Risks:** Network timeout during backup.
-* **Validation:** Backup written and verified; Git working tree clean.
-* **Expected result:** Verified local backup and baseline metrics documented.
-* **Status:** PENDING.
+### STEP 001 — Architecture Audit & System Inventory
+- [x] Run directory tree and file size audit across entire workspace
+- [x] Profile top 25 largest files and line counts
+- [x] Inspect Firestore database rules and single-document schema
+- [x] Run existing test suites (`npm test`) — 14 suites, 57/57 passed
+- [x] Initialize Git repository tracking and create baseline commit `fd26c21`
+- [x] Generate `docs/CURRENT-STATE.md` and update `docs/ARCHITECTURE.md`
+- [x] Mark step complete
 
 ---
 
-### PHASE 2 — Next.js Foundation
-* **Goal:** Initialize Next.js 16 (App Router) + TypeScript build pipeline in the workspace alongside existing code without breaking the existing static setup.
-* **Reason:** Create the modern build and bundling engine capable of Server Components, tree-shaking, and code-splitting.
-* **Dependencies:** Phase 1.
-* **Files involved:** `package.json`, `tsconfig.json`, `next.config.ts`, `app/layout.tsx`.
-* **Tasks:**
-  - [ ] Install Next.js 16, React 19, React DOM, and TypeScript dependencies.
-  - [ ] Configure `tsconfig.json` with strict path aliases (`@/*`).
-  - [ ] Configure `next.config.ts` for standalone deployment and clean routing.
-  - [ ] Create root `app/layout.tsx` loading Google Fonts (Outfit, Inter, JetBrains Mono) via `next/font`.
-  - [ ] Verify `npm run build` succeeds cleanly.
-* **Risks:** Dependency version conflicts with existing `firebase` package.
-* **Validation:** Next.js build passes with zero TypeScript or bundling errors.
-* **Expected result:** Clean Next.js foundation ready for progressive component migration.
-* **Status:** PENDING.
+### STEP 002 — Performance Baseline & Metric Profiling
+- [x] Calculate total unminified JS payload (3,023.58 KB)
+- [x] Calculate total unminified HTML payload (1,015.82 KB)
+- [x] Calculate total CSS payload (52.22 KB)
+- [x] Profile initial request count (47 requests) and total transfer (5.02 MB)
+- [x] Document Core Web Vitals lab baseline (FCP 14.6s, LCP 29.9s, TTI 30.0s, TBT 750ms)
+- [x] Generate `docs/PERFORMANCE.md` with baseline vs. target benchmarks
+- [x] Mark step complete
 
 ---
 
-### PHASE 3 — Clean Routing
-* **Goal:** Establish unified Next.js App Router hierarchy with route groups matching exact public URL paths.
-* **Reason:** Eliminate client-side HTML fetch/injection (`router/router.js`) while maintaining clean single-domain URLs.
-* **Dependencies:** Phase 2.
-* **Files involved:** `app/(auth)/login/`, `app/(main)/layout.tsx`, `app/(main)/dashboard/`, `app/(main)/analytics/`, etc.
-* **Tasks:**
-  - [ ] Create route group `app/(auth)/login/page.tsx` for clean `/login` route.
-  - [ ] Create route group `app/(main)/layout.tsx` for authenticated shell (sidebar + header).
-  - [ ] Create clean route pages: `/dashboard`, `/analytics`, `/focus`, `/daily-actions`, `/schedule`, `/targets`, `/subjects`, `/pace`, `/settings`, `/outcome`, `/exam`.
-  - [ ] Configure root `app/(main)/page.tsx` to redirect cleanly to `/dashboard`.
-  - [ ] Ensure route groups never leak into URL paths.
-* **Risks:** Routing mismatches or broken navigation links.
-* **Validation:** All 11 public URLs resolve correctly in local browser.
-* **Expected result:** Full URL structure matches clean single-domain requirements.
-* **Status:** PENDING.
+### STEP 003 — Safety Checkpoints & Backup Verification
+- [ ] Verify cloud database backup script (`scripts/backup.js`)
+- [ ] Run dry-run verification via `scripts/verify-backup.js`
+- [ ] Confirm `firebase-service-account.json` remains strictly ignored
+- [ ] Confirm Firestore connection to `x29/state`
+- [ ] Create Git checkpoint tag: `checkpoint-step-003`
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 4 — React Component Architecture
-* **Goal:** Establish core reusable React component hierarchy preserving exact X-29 visual language.
-* **Reason:** Eliminate raw HTML string concatenations and enable declarative component composition.
-* **Dependencies:** Phase 3.
-* **Files involved:** `components/navigation/`, `components/feedback/`, `components/ui/`.
-* **Tasks:**
-  - [ ] Build `Sidebar` component reproducing desktop sidebar and mobile off-canvas drawer.
-  - [ ] Build `Header` component with Tabular countdown timer and live sync badge.
-  - [ ] Build `LoadingOverlay` reproducing animated logo and shimmer progress bar.
-  - [ ] Build `Toast` and `Confetti` notification components.
-  - [ ] Verify exact visual parity against `index.html` shell.
-* **Risks:** Visual drift from original CSS classes.
-* **Validation:** Side-by-side visual comparison matches 100%.
-* **Expected result:** Shell UI faithfully rendered in modular React.
-* **Status:** PENDING.
+### STEP 004 — Next.js 16 & TypeScript Build Pipeline Setup
+- [ ] Install Next.js, React, React DOM, and TypeScript packages
+- [ ] Configure `tsconfig.json` with strict path aliases (`@/*`)
+- [ ] Configure `next.config.ts` for standalone deployment
+- [ ] Verify `npm run build` succeeds cleanly alongside existing tests
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 5 — TypeScript Migration
-* **Goal:** Create complete TypeScript domain types matching all X-29 data models.
-* **Reason:** Enforce end-to-end type safety across state, calculations, and database operations.
-* **Dependencies:** Phase 4.
-* **Files involved:** `types/appState.ts`, `types/task.ts`, `types/track.ts`, `types/targets.ts`, `types/timer.ts`.
-* **Tasks:**
-  - [ ] Define `Task`, `Track`, `Program`, `Subject`, `Chapter` types.
-  - [ ] Define `MonthlyTarget`, `WeeklyTarget`, `DailyTarget` database schemas.
-  - [ ] Define `TimerLog`, `ActiveTimerState`, and `FocusSession` interfaces.
-  - [ ] Define complete `FullAppState` type matching all 48 Firestore keys.
-  - [ ] Validate types against existing `tests/*.test.js` fixtures.
-* **Risks:** Undocumented legacy data properties causing type errors.
-* **Validation:** Strict `tsc --noEmit` passes with zero errors.
-* **Expected result:** 100% typed domain layer.
-* **Status:** PENDING.
+### STEP 005 — Tailwind Build Pipeline & Global Styles Modernization
+- [ ] Configure PostCSS and Tailwind CSS build-time pipeline
+- [ ] Migrate `css/style.css` custom classes into `app/globals.css`
+- [ ] Verify `.glass-card`, `.cyber-badge`, `.glowing-input` pixel accuracy
+- [ ] Eliminate runtime `cdn.tailwindcss.com` dependency
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 6 — Shared UI Architecture
-* **Goal:** Wrap Radix UI accessible primitives with exact X-29 CSS styling for modals, dropdowns, and tabs.
-* **Reason:** Replace monolithic 40-modal DOM footprint with on-demand portal dialogs.
-* **Dependencies:** Phase 5.
-* **Files involved:** `components/ui/dialog.tsx`, `components/ui/dropdown.tsx`, `components/ui/tabs.tsx`.
-* **Tasks:**
-  - [ ] Implement `Modal` primitive using Radix Dialog retaining `.glass-card` and animations.
-  - [ ] Implement `Dropdown` primitive with program/track optgroup styling.
-  - [ ] Implement `Tabs` primitive with active pill indicators.
-  - [ ] Wire modal open/close actions to on-demand rendering.
-* **Risks:** Backdrop click or escape key handling inconsistencies.
-* **Validation:** Modal opens smoothly with identical slide/scale transition; DOM unmounts on close.
-* **Expected result:** Clean, accessible primitives with zero residual modal DOM overhead when closed.
-* **Status:** PENDING.
+### STEP 006 — Core TypeScript Type System & Data Interfaces
+- [ ] Define `types/database.ts` matching 48 keys of `x29/state`
+- [ ] Define `types/task.ts` (Task, Track, Subject, Chapter, Syllabus)
+- [ ] Define `types/target.ts` (Monthly, Weekly, Daily target records)
+- [ ] Define `types/timer.ts` (TimerLog, ActiveTimerState)
+- [ ] Define `types/exam.ts` and `types/pace.ts`
+- [ ] Verify zero TypeScript errors under `strict: true`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 7 — Zustand State Architecture
-* **Goal:** Migrate `window.AppState` into modular Zustand stores with granular selectors.
-* **Reason:** Eliminate global variable pollution and prevent unnecessary whole-application re-renders.
-* **Dependencies:** Phase 6.
-* **Files involved:** `stores/useAppStore.ts`, `stores/useTimerStore.ts`, `stores/useTargetsStore.ts`.
-* **Tasks:**
-  - [ ] Implement `useAppStore` for tracks, tasks, syllabus, and dashboard configs.
-  - [ ] Implement `useTimerStore` for active focus stopwatch/alarm state.
-  - [ ] Implement `useTargetsStore` for MTDB, WTDB, and DTDB cascades.
-  - [ ] Implement `useAuthStore` for session state and user identity.
-  - [ ] Preserve fast synchronous local storage persistence.
-* **Risks:** State synchronization lag between stores.
-* **Validation:** State updates trigger only subscribed components; unit tests pass.
-* **Expected result:** High-performance reactive state management.
-* **Status:** PENDING.
+### STEP 007 — Next.js App Router Shell & Layout Structure
+- [ ] Configure `next/font` for *Outfit*, *Inter*, *JetBrains Mono*, *Rajdhani*
+- [ ] Create persistent shell `app/(main)/layout.tsx` (RSC)
+- [ ] Build `Header` component with profile badge & cloud sync status
+- [ ] Build `Sidebar` component with active route indicators
+- [ ] Build mobile drawer and bottom navigation
+- [ ] Verify visual and responsive parity against legacy shell
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 8 — Firebase / Firestore Architecture
-* **Goal:** Migrate Firebase services to Modular SDK v11 and preserve conflict resolution engine.
-* **Reason:** Eliminate legacy Compat library footprint (saving 200KB+ JS) while preserving data integrity.
-* **Dependencies:** Phase 7.
-* **Files involved:** `services/firebase.ts`, `services/auth.ts`, `services/sync.ts`.
-* **Tasks:**
-  - [ ] Initialize Firebase Modular SDK (`firebase/app`, `firebase/auth`, `firebase/firestore`).
-  - [ ] Migrate `AuthService` with email/password login and `ris2k29@gmail.com` admin guard.
-  - [ ] Port `onSnapshot` real-time listener with `syncGeneration` and self-echo suppression.
-  - [ ] Port array reconciliation logic (`reconcileArrays`) and tombstone tracking (`_tombstones`).
-  - [ ] Verify cloud writes match `firestore.rules` schema byte-for-byte.
-* **Risks:** Breaking Firestore snapshot merge logic during real-time updates.
-* **Validation:** Run full regression cloud sync tests; verify live document in `x-2k-29`.
-* **Expected result:** Modernized modular Firebase service with 100% data integrity.
-* **Status:** PENDING.
+### STEP 008 — Shared UI Primitives & Radix Dialog System
+- [ ] Install and configure `@radix-ui/react-dialog`
+- [ ] Install and configure `@radix-ui/react-dropdown-menu`
+- [ ] Install and configure `@radix-ui/react-tooltip`
+- [ ] Style Radix dialogs to match `.glass-card` and backdrop blur
+- [ ] Verify focus management and keyboard accessibility
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 9 — IndexedDB / Local-first Layer
-* **Goal:** Integrate IndexedDB via `idb` for multi-megabyte offline storage and session history.
-* **Reason:** Overcome 5MB `localStorage` limitations and provide true local-first responsiveness.
-* **Dependencies:** Phase 8.
-* **Files involved:** `services/storage/idb.ts`, `stores/useAppStore.ts`.
-* **Tasks:**
-  - [ ] Create IndexedDB stores for `appState`, `timerLogs`, and `offlineQueue`.
-  - [ ] Implement transparent fallback to `localStorage` when IndexedDB is unavailable.
-  - [ ] Implement background offline mutation queue with auto-sync on reconnect.
-* **Risks:** Asynchronous storage hydration delays during initial boot.
-* **Validation:** Offline mutations persist across reloads and sync to cloud when reconnected.
-* **Expected result:** Robust local-first storage capable of holding years of focus logs.
-* **Status:** PENDING.
+### STEP 009 — Zustand Modular State Management Layer
+- [ ] Implement `stores/useTaskStore.ts`
+- [ ] Implement `stores/useTargetStore.ts`
+- [ ] Implement `stores/usePaceStore.ts`
+- [ ] Implement `stores/useTimerStore.ts`
+- [ ] Implement `stores/useConfigStore.ts`
+- [ ] Implement `stores/useSyncStore.ts`
+- [ ] Implement bi-directional legacy adapter bridge
+- [ ] Write unit tests verifying optimistic updates & state persistence
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 10 — Page-by-Page Migration
-* **Goal:** Migrate all 11 application feature pages to React Server/Client components with 100% visual and functional parity.
-* **Reason:** Transform monolithic page scripts into clean, maintainable feature components.
-* **Dependencies:** Phase 9.
-* **Sub-Tasks:**
-  - [ ] **10.1 Login Page:** Port `login.html` form, validation, and error banner.
-  - [ ] **10.2 Dashboard:** Port Totals KPIs, Checklists (Daily, Weekly, Monthly), Success Score.
-  - [ ] **10.3 Focus & Timer:** Port Chronograph dial, stopwatch engine, fullscreen mode.
-  - [ ] **10.4 Targets Setup:** Port Monthly Target Setup, Batch Allocator, Auto-Spread.
-  - [ ] **10.5 Daily Actions:** Port Habits tracker, streaks, and action cards.
-  - [ ] **10.6 Daily Schedule:** Port Schedule blocks and Routine Sets.
-  - [ ] **10.7 Subjects:** Port Curriculum navigator, progress bars, and revision mode.
-  - [ ] **10.8 Pace Management:** Port Pace estimators, candle charts, deadline goals.
-  - [ ] **10.9 Master Config:** Port Track creator, priority queue, and syllabus editor.
-  - [ ] **10.10 Outcome:** Port Results tracking, celebration configs, confetti triggers.
-  - [ ] **10.11 Exam Routine:** Port Exam countdowns, routines, session logs.
-  - [ ] **10.12 Spectra Analytics:** Port Chart.js pace curves, 365-day heatmaps.
-* **Risks:** Visual discrepancies or missing edge-case handlers.
-* **Validation:** Verify visual parity page-by-page against original running version.
-* **Expected result:** All 11 pages fully modernized in React.
-* **Status:** PENDING.
+### STEP 010 — Modular Firebase & Firestore Sync Layer
+- [ ] Configure modular Firebase 12.x client in `services/firebase/client.ts`
+- [ ] Port 180ms debounced autosave engine with `_lastWriteId`
+- [ ] Port tombstone reconciliation algorithm for concurrent deletes
+- [ ] Port real-time `onSnapshot` listener on `x29/state`
+- [ ] Verify self-write echo suppression
+- [ ] Run automated sync test suite
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 11 — Large File Elimination
-* **Goal:** Break down all files exceeding 500 lines into single-responsibility submodules.
-* **Reason:** Eliminate technical debt and guarantee long-term maintainability.
-* **Dependencies:** Phase 10.
-* **Files involved:** `monthlyTargets.js` (282KB), `timerService.js` (118KB), `dashboard.js` (102KB), `taskEngine.js` (95KB), etc.
-* **Tasks:**
-  - [ ] Split `monthlyTargets` into `allocator.ts`, `autoSpread.ts`, `mtdbTable.ts`, `views/`.
-  - [ ] Split `timerService` into `clockEngine.ts`, `fullscreen.ts`, `sessionLogger.ts`, `audio.ts`.
-  - [ ] Split `dashboard` into `kpiWidgets/`, `dailyChecklist/`, `weeklyChecklist/`, `trendBars/`.
-  - [ ] Split `taskEngine` into `studyPlan.ts`, `taskToggle.ts`, `editModal.ts`, `revision.ts`.
-* **Risks:** Broken internal imports or cyclical dependencies.
-* **Validation:** All submodules $\le$ 300 lines; zero circular dependencies in import graph.
-* **Expected result:** Clean, highly modular feature architecture.
-* **Status:** PENDING.
+### STEP 011 — IndexedDB Local-First Persistence Layer
+- [ ] Configure `idb` client and object stores (`workspace`, `timer_logs`, `queue`)
+- [ ] Implement sub-15ms cold-boot state restoration from IDB
+- [ ] Implement non-blocking background write serialization
+- [ ] Verify offline boot capabilities in DevTools
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 12 — Client JavaScript Reduction
-* **Goal:** Audit and eliminate unused client-side JavaScript; convert static sections to Server Components.
-* **Reason:** Drastically reduce browser CPU load and memory consumption.
-* **Dependencies:** Phase 11.
-* **Tasks:**
-  - [ ] Audit all components for unnecessary `"use client"` directives.
-  - [ ] Move static layouts and text containers to Server Components.
-  - [ ] Remove unused legacy polyfills and utility functions.
-* **Risks:** Attempting to render interactive hooks in Server Components.
-* **Validation:** Next.js build manifest shows minimal client bundle sizes per route.
-* **Expected result:** Client bundle reduced by > 60%.
-* **Status:** PENDING.
+### STEP 012 — Mathematical KPI & Metrics Calculation Engine Migration
+- [ ] Port `recalculateTotals()`, `updateCountdown()`, `updateSuccessScore()`
+- [ ] Port `updateMetrics()` and subject progress formulas
+- [ ] Enforce exact 2-decimal-place velocity formatting
+- [ ] Run regression suite comparing legacy vs. new metrics outputs
+- [ ] Verify 100% mathematical parity
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 13 — Performance Optimization
-* **Goal:** Optimize loading, runtime rendering, and memory lifecycle.
-* **Reason:** Achieve target Core Web Vitals (FCP < 1.5s, LCP < 2.5s, TBT < 150ms).
-* **Dependencies:** Phase 12.
-* **Tasks:**
-  - [ ] Dynamically import heavy Chart.js components using `next/dynamic` (`ssr: false`).
-  - [ ] Replace CDN Tailwind with compiled Tailwind CSS at build time.
-  - [ ] Optimize images (`logo-sticker.png` converted to modern WebP / AVIF).
-  - [ ] Implement memoization (`React.memo`, `useMemo`, `useCallback`) on checklist items and clock hands.
-* **Risks:** Chart re-rendering flickering on tab switch.
-* **Validation:** Run automated Lighthouse audit; verify Performance Score $\ge$ 90.
-* **Expected result:** Blazing fast load times and silky 60fps animations.
-* **Status:** PENDING.
+### STEP 013 — Dashboard Feature & KPI Cards Migration
+- [ ] Build KPI Stat Cards (Completed Chapters, Velocity, Success Score, Days Left)
+- [ ] Build Daily Checklist Card with instant completion toggles
+- [ ] Build Weekly Checklist Card and Monthly Target Card
+- [ ] Build Upcoming Exam and Passed Subjects widget
+- [ ] Verify visual and behavioral parity on `/dashboard`
+- [ ] Run test suite `tests/tasks-metrics-dashboard.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 14 — Mobile Optimization
-* **Goal:** Ensure smooth execution and low memory consumption on Android mobile devices.
-* **Reason:** Prevent mobile browser crashes or sluggishness during long study sessions.
-* **Dependencies:** Phase 13.
-* **Tasks:**
-  - [ ] Audit touch targets and button spacing across mobile widths.
-  - [ ] Optimize SVG clock needle rendering using CSS `will-change: transform`.
-  - [ ] Test background timer execution with CPU throttling enabled (4x slowdown).
-* **Risks:** Mobile browser sleeping background timers.
-* **Validation:** Mobile Chrome DevTools audit passes without frame drops.
-* **Expected result:** Native-app feel on mobile devices.
-* **Status:** PENDING.
+### STEP 014 — Task Engine & Study Plan Management Migration
+- [ ] Build Study Plan generator hook with holiday avoidance
+- [ ] Port `handleTaskToggle()`, `toggleSkipTask()`, `deleteTask()`
+- [ ] Port revision mode and chapter progress tracking
+- [ ] Verify task edit modal functionality
+- [ ] Run test suite `tests/tasks-metrics-dashboard.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 15 — Responsive Optimization
-* **Goal:** Perfect layout responsiveness across small phones (360px), tablets (768px), and wide monitors (1920px).
-* **Reason:** Eliminate horizontal scrolling, clipping, or misaligned cards.
-* **Dependencies:** Phase 14.
-* **Tasks:**
-  - [ ] Fix table overflow on Monthly and Weekly Target databases.
-  - [ ] Refine grid columns from 1-column (mobile) to 4-column (desktop).
-  - [ ] Verify drawer sidebar backdrop and close behavior across orientations.
-* **Risks:** Layout breaks on intermediate viewport widths (e.g. 600px - 720px).
-* **Validation:** Responsive resize test across 320px, 375px, 768px, 1024px, 1440px.
-* **Expected result:** Flawless fluid layout across all devices.
-* **Status:** PENDING.
+### STEP 015 — Multi-Tier Targets System Migration (Monthly, Weekly, Daily)
+- [ ] Port Monthly Targets Database (MTDB) allocation algorithms
+- [ ] Port Weekly Targets Database (WTDB) ISO week binding
+- [ ] Port Daily Targets calendar synchronization
+- [ ] Verify cascade deletion and orphan cleaning
+- [ ] Run test suites `tests/monthly-targets.test.js`, `tests/weekly-targets.test.js`, `tests/daily-targets.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 16 — Accessibility (a11y)
-* **Goal:** Elevate Accessibility score to $\ge$ 95/100.
-* **Reason:** Ensure clear keyboard navigation, ARIA landmarks, and focus management.
-* **Dependencies:** Phase 15.
-* **Tasks:**
-  - [ ] Add explicit `aria-label` attributes to icon buttons.
-  - [ ] Ensure proper heading hierarchy (`h1` $\rightarrow$ `h2` $\rightarrow$ `h3`).
-  - [ ] Implement focus trapping on modal dialogs.
-* **Risks:** High-contrast overrides clashing with dark theme aesthetic.
-* **Validation:** Lighthouse Accessibility score passes $\ge$ 95.
-* **Expected result:** Fully accessible technical operating system.
-* **Status:** PENDING.
+### STEP 016 — Focus Timer & Procedural Audio Engine Migration
+- [ ] Build Web Worker-based timer engine with drift compensation
+- [ ] Build procedural Web Audio synthesizer for alarms/chimes
+- [ ] Build fullscreen immersive mode overlay
+- [ ] Port session history logger and streak calculator
+- [ ] Verify 10-minute background tab accuracy test
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 17 — PWA / Service Worker
-* **Goal:** Implement production-grade Service Worker for offline asset caching and PWA installation.
-* **Reason:** Complete missing baseline PWA functionality without stale data risks.
-* **Dependencies:** Phase 16.
-* **Files involved:** `public/sw.js`, `manifest.json`.
-* **Tasks:**
-  - [ ] Configure Serwist / Workbox Service Worker.
-  - [ ] Precaching static assets (HTML, CSS, JS bundles, fonts, icons).
-  - [ ] Implement Network-First with Cache Fallback for API and Firestore endpoints.
-  - [ ] Wire PWA `beforeinstallprompt` event to `#pwa-install-btn`.
-* **Risks:** Aggressive caching serving stale study or targets data.
-* **Validation:** Application loads fully in Chrome with "Offline" network throttling.
-* **Expected result:** Fully installable, resilient offline PWA.
-* **Status:** PENDING.
+### STEP 017 — Spectra Analytics & Heatmap Visualization Migration
+- [ ] Implement dynamic `react-chartjs-2` Spectra velocity combo chart
+- [ ] Implement GitHub-style 365-day study heatmap
+- [ ] Implement interactive Chapter Dependency Map matrix
+- [ ] Verify chart cleanup on unmount (zero memory leaks)
+- [ ] Run test suite `tests/analytics-visualization.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 18 — Production Optimization
-* **Goal:** Prepare production build for Vercel deployment with optimal headers, caching, and compression.
-* **Reason:** Ensure production performance and security compliance.
-* **Dependencies:** Phase 17.
-* **Tasks:**
-  - [ ] Configure `vercel.json` with security headers (CSP, HSTS, X-Frame-Options).
-  - [ ] Configure asset caching headers (`Cache-Control: public, max-age=31536000, immutable`).
-  - [ ] Verify production bundle analyzer report.
-* **Risks:** Strict CSP blocking Firebase Auth or Google Fonts.
-* **Validation:** Successful production build and test deployment on Vercel preview.
-* **Expected result:** Production-grade deployment configuration.
-* **Status:** PENDING.
+### STEP 018 — Daily Schedule & Timeblocking Routine Migration
+- [ ] Implement Routine Set 1 vs 2 switcher
+- [ ] Build hour-by-hour timeblock visual schedule
+- [ ] Implement active slot live highlight based on system clock
+- [ ] Verify timeblock add/edit/delete modals
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 19 — Final Regression Testing
-* **Goal:** Execute end-to-end regression validation comparing original vs modernized versions.
-* **Reason:** Guarantee 100% functional, mathematical, and visual parity.
-* **Dependencies:** Phase 18.
-* **Tasks:**
-  - [ ] Run all automated unit and integration suites (`full-regression.test.js`).
-  - [ ] Perform side-by-side visual parity checks across all 11 pages.
-  - [ ] Verify task toggling, target cascade, focus timer session logging, and Firestore sync.
-  - [ ] Test backup and restore compatibility against live database.
-* **Risks:** Uncovered edge cases in target calculation propagation.
-* **Validation:** 100% test pass rate, zero console errors, zero visual regression.
-* **Expected result:** Certified modernized X-29 Advance.
-* **Status:** PENDING.
+### STEP 019 — Subjects Syllabus & Chapter Progress Migration
+- [ ] Build Track/Subject selector tabs with canonical colors
+- [ ] Build Chapter progress checklist and status badges
+- [ ] Implement fast search filter
+- [ ] Verify single source of truth (18 chapters for Financial Accounting)
+- [ ] Run test suite `tests/data-consistency.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
 
 ---
 
-### PHASE 20 — Final Cleanup
-* **Goal:** Safely decommission legacy scripts and archive unneeded files with verified rollback checkpoint.
-* **Reason:** Deliver a spotless, modern codebase without residual dead files.
-* **Dependencies:** Phase 19.
-* **Tasks:**
-  - [ ] Archive legacy scripts into `archive/` or remove verified redundant files.
-  - [ ] Finalize documentation in `docs/MEMORY.md`.
-  - [ ] Create permanent release Git tag: `v2.0.0-modernized`.
-* **Risks:** Accidentally deleting a file needed by CLI backup scripts.
-* **Validation:** `npm test` and backup scripts run cleanly post-cleanup.
-* **Expected result:** Clean, high-performance, maintainable X-29 codebase.
-* **Status:** PENDING.
+### STEP 020 — Pace Management & Velocity Estimator Migration
+- [ ] Build Pace Goal cards with required velocity display
+- [ ] Implement deadline adjustment slider & live recalculated finish date
+- [ ] Verify strict 2-decimal-place velocity units (`X.XX Ch/Day`)
+- [ ] Run test suite `tests/pace-outcome.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 021 — Exam Routine & Countdown Timetable Migration
+- [ ] Build Exam Timetable grid with dates, times, and subject codes
+- [ ] Build live ticking countdown widget per paper
+- [ ] Verify routine configuration forms
+- [ ] Run test suite `tests/pace-outcome.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 022 — Outcomes, Celebrations & Passing Grades Migration
+- [ ] Build Exam Results input cards and CGPA calculator
+- [ ] Build passing grade configuration interface
+- [ ] Implement canvas-confetti celebration milestone trigger
+- [ ] Verify numerical calculations against legacy logic
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 023 — Master Config, Tracks & Priority Settings Migration
+- [ ] Build Academic Tracks manager (Add/Edit/Reorder)
+- [ ] Build Priority Matrix configurator
+- [ ] Build Custom Programs and Syllabus Structure editor
+- [ ] Verify permanent elimination of `updateManageDropdown` startup error
+- [ ] Run test suite `tests/config-tracks.test.js`
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 024 — Habits Tracker & Daily Check-in Migration
+- [ ] Build Daily Habits checklist with instant completion toggles
+- [ ] Implement streak counters and consistency badges
+- [ ] Build DADB (Daily Action Daily Budget) modal dialogue
+- [ ] Verify persistence across simulated midnight rollover
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 025 — 40 Modal Dialogs Full Migration & Parity Verification
+- [ ] Migrate all 40 modal dialogues into typed React portals
+- [ ] Verify exact HTML IDs, styling classes, and close triggers
+- [ ] Verify keyboard shortcuts (ESC dismiss, Enter submit)
+- [ ] Run automated modal test suite `tests/modals.test.js`
+- [ ] Update `docs/DESIGN-PARITY.md` modal checklist
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 026 — Monolithic `index.html` Shell Elimination
+- [ ] Verify all routes render cleanly via Next.js App Router
+- [ ] Reconfigure server entry point to serve modern Next.js build
+- [ ] Archive `index.html` safely
+- [ ] Verify full test suite passes on modern entry point
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 027 — Legacy JavaScript Files Decomposition & Pruning
+- [ ] Audit and remove obsolete scripts in `js/features/` and `pages/`
+- [ ] Remove legacy `<script>` tags from build pipeline
+- [ ] Verify zero console errors or missing global references
+- [ ] Run `npm test` and verify all tests pass
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 028 — Client JavaScript Reduction & Dynamic Code-Splitting
+- [ ] Configure dynamic imports for Chart.js and heavy visualizers
+- [ ] Enforce React Server Components for static layouts
+- [ ] Measure route-level bundle sizes (< 120 KB per route)
+- [ ] Verify fast instant navigation transitions
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 029 — Firebase Realtime Optimization & Network Batching
+- [ ] Implement differential write payloads for `x29/state`
+- [ ] Optimize debounce scheduler for rapid user clicks
+- [ ] Audit and eliminate redundant realtime snapshot reads
+- [ ] Verify cloud write deduplication
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 030 — Mobile Touch & Low-End Android Optimization
+- [ ] Implement `content-visibility: auto` on long task checklists
+- [ ] Audit touch event listeners for passive scroll compatibility
+- [ ] Test on 4x CPU slowdown in Chrome DevTools
+- [ ] Verify 60fps smooth scrolling on mobile viewports
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 031 — Progressive Web App (PWA) & Serwist Service Worker
+- [ ] Implement Service Worker with Serwist / Workbox
+- [ ] Configure Cache-First for static assets, Network-First for API
+- [ ] Verify PWA install prompt triggers and registers
+- [ ] Test offline loading in airplane mode
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 032 — Offline Sync & Conflict Resolution Hardening
+- [ ] Implement offline mutation queue in IndexedDB
+- [ ] Implement automatic sync replay upon `online` event
+- [ ] Test multi-mutation offline scenario with cloud reconciliation
+- [ ] Verify zero data loss on network failure
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 033 — Accessibility (a11y) & Keyboard Navigation Hardening
+- [ ] Add missing ARIA attributes to all buttons, tabs, and drawers
+- [ ] Verify full keyboard focus management across all 40 modals
+- [ ] Run automated Lighthouse Accessibility audit (Target: $\ge 95$)
+- [ ] Verify zero visual disruption to custom design aesthetic
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 034 — Production Build & Bundle Optimization
+- [ ] Optimize and compress static image assets (`logo-sticker.png`)
+- [ ] Enable Brotli/Gzip compression and tree-shaking
+- [ ] Run production build and verify zero bundle warnings
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 035 — Full End-to-End Regression Verification
+- [ ] Run all automated test suites in `tests/`
+- [ ] Verify all 11 pages match `docs/DESIGN-PARITY.md`
+- [ ] Verify all 40 modals open, function, and dismiss cleanly
+- [ ] Verify Firestore synchronization and local persistence
+- [ ] Create Git checkpoint
+- [ ] Update documentation & mark step complete
+
+---
+
+### STEP 036 — Final Legacy Cleanup & Production Validation
+- [ ] Clean up temporary scratch scripts and audit logs
+- [ ] Record final Core Web Vitals in `docs/PERFORMANCE.md`
+- [ ] Update `docs/MEMORY.md` and `docs/MIGRATION-LOG.md`
+- [ ] Tag final Git release: `v2.0.0-modernized`
+- [ ] Mark project complete

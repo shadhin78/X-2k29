@@ -1,118 +1,103 @@
 # X-29 ADVANCE — PERMANENT DEVELOPMENT RULES & GOVERNANCE
 
-> **Document Version:** 1.0.0  
+> **Document Version:** 1.1.0  
 > **Status:** Active / Non-Negotiable AI Control File  
-> **Target Audience:** All AI Agents, Engineers, and Collaborators on X-29
+> **Target Audience:** All AI Agents, Engineers, and Collaborators on X-29  
+> **Database:** Google Cloud Firestore (`ai-studio-x2k29-0bea0128-fcaa-4732-97b2-c13b97d4515f` / `x29/state`)
 
 ---
 
-## 1. ABSOLUTE DESIGN RULE: ZERO UNPROMPTED REDESIGN
+## 1. THE 15 FOUNDATIONAL LAWS (NON-NEGOTIABLE)
 
-> [!CAUTION]
-> **THE CURRENT HTML/CSS/JS VERSION IS THE VISUAL SOURCE OF TRUTH.**  
-> Under no circumstances may an AI agent or developer independently redesign, reskin, or "modernize" the visual appearance of X-29 without explicit, written instruction from the user.
+Every AI session and developer working on X-29 must obey these 15 foundational laws without exception:
 
-1. **Pixel & Behavioral Parity:** The modernized version must look, feel, animate, and behave identically to the existing version.
-2. **Forbidden Changes:**
-   * Do NOT change color palettes, dark mode shades (`#0b0f19`, `#0f172a`), or surface gradients.
-   * Do NOT change fonts (Outfit, Inter, Plus Jakarta Sans, JetBrains Mono, Rajdhani, Chakra Petch).
-   * Do NOT modify margins, padding, card borders, corner radii, or visual density.
-   * Do NOT replace existing custom cards (`.glass-card`), inputs (`.glowing-input`), or badges with generic shadcn/ui or stock Tailwind templates.
-   * Do NOT alter existing micro-animations, slide-up page transitions, or pulse effects (`animate-page-enter`, `shimmer-progress`, `animate-aura`).
-   * Do NOT rewrite or alter user-facing terminology, button labels, badge texts, or table headers.
-3. **Target Equation:**
-   $$\text{OLD X-29 DESIGN} \equiv \text{NEW X-29 DESIGN}$$
-   *The entire technical modernization happens strictly underneath the user interface.*
-
----
-
-## 2. FUNCTIONALITY & BUSINESS LOGIC PRESERVATION
-
-1. **Feature Retention:** No existing feature, view, modal, calculation, or helper may be pruned or silently dropped.
-2. **Math & Metrics Integrity:**
-   * KPI calculations in `js/core/metrics.js` (Totals, Success Score, Countdown, Subject Progress) must output identical numerical values.
-   * Pace estimation algorithms in `js/features/pace/` must maintain exact formulaic relationships between target deadlines and required chapter rates.
-   * Focus Timer calculations in `shared/services/timerService.js` (elapsed time, session logging, streak calculation) must remain mathematically exact.
-3. **Database Schema Stability:**
-   * Do NOT arbitrarily alter Firestore document structures or field types in `/users/{userId}`.
-   * All 48 whitelisted top-level keys in `firestore.rules` must remain supported.
-   * Any change to data structures requires explicit user approval and backward-compatible migration logic in `migrateLegacyData()`.
-4. **Security Rules Immobility:**
-   * `firestore.rules` is production infrastructure. Do NOT modify, weaken, or deploy security rule changes without explicit user authorization.
+1. **Existing X-29 design is the visual source of truth.** The current HTML, CSS, and rendered UI define the target look, feel, spacing, sizing, fonts, colors, and animations.
+2. **Do not redesign.** Do not make the interface "better looking", do not introduce a new visual style, and do not replace the existing design with Tailwind defaults, shadcn defaults, Radix defaults, or any generic modern UI templates.
+3. **Do not remove functionality.** Every existing view, modal, button, dropdown, calculation, algorithm, chart, toggle, habit tracker, and helper must be retained.
+4. **Do not change behavior without explicit approval.** Workflows, interactions, state transitions, date rollovers, auto-spread logic, and shortcut behaviors must remain identical from the user's perspective.
+5. **Do not change Firebase data structure casually.** The cloud document structure at `x29/state` and its whitelisted keys must be preserved. Any optimization must maintain 100% backward and forward compatibility with existing backups and the Node backup CLI.
+6. **Do not expose secrets.** Never commit private keys, service account credentials, or API secrets into client bundles or public repositories.
+7. **Do not perform giant blind rewrites.** Never attempt a single-turn mass rewrite. Modernization must be incremental, modular, testable, and reversible.
+8. **Work one numbered step at a time.** Implement ONLY the single step instructed by the user. Do not proceed to the next step until the current step is verified and approved.
+9. **Test every step.** Run automated test suites and verify console logs, functionality, and visual parity after every step.
+10. **Update documentation after every step.** Update `MODERNIZATION-PLAN.md`, `TASKS.md`, `MEMORY.md`, `PERFORMANCE.md`, `DESIGN-PARITY.md`, and `MIGRATION-LOG.md` after completing any step.
+11. **Create a Git checkpoint for every major completed step.** Commit changes cleanly with a descriptive message referencing the step number.
+12. **Never silently skip a step.** Every numbered step in the roadmap must be deliberately addressed or formally marked deprecated with written justification.
+13. **Never silently mark a step complete.** A step is ONLY complete when all acceptance criteria and test validations have been executed and documented.
+14. **Read documentation before continuing a previous step.** Always inspect `docs/MEMORY.md`, `docs/MODERNIZATION-PLAN.md`, and `docs/TASKS.md` at the start of every session before touching code.
+15. **Prefer measurable performance improvements.** Every architectural change should demonstrably improve load times, bundle sizes, render speed, memory usage, or network efficiency.
 
 ---
 
-## 3. MIGRATION & REFACTORING PROTOCOLS
+## 2. DESIGN & VISUAL PARITY GOVERNANCE
 
-1. **Incremental Execution Only:** Never perform a blind "big bang" rewrite. Modernization must proceed phase-by-phase, module-by-module.
-2. **Pre-Migration Dependency Audit:** Before touching or moving any module:
-   * Inspect all inbound and outbound dependencies.
-   * Identify all `window` global attachments and event listeners.
-   * Verify whether the module interacts with `AppState`, `FirebaseService`, `TimerService`, or `Router`.
-3. **Rollback Points & Git Discipline:**
-   * Maintain a clean Git working tree before starting any phase.
-   * Create an explicit Git checkpoint (`git status`, commit with descriptive phase summary) upon completion.
-   * Never delete legacy files until the replacement module is verified functional and passes regression tests.
-4. **Automated Verification Gate:** Every migrated component must pass existing test suites in `tests/` (`full-regression.test.js`) or newly created modular unit tests before moving to the next task.
+```text
+OLD X-29
+Design       = Same
+System       = Same
+Function     = Same
+Behavior     = Same
+Data         = Same
 
----
+NEW X-29
+Technology   = Modernized
+Architecture = Modernized
+Performance  = Greatly Improved
+Maintainability = Greatly Improved
+```
 
-## 4. PERFORMANCE & RUNTIME GOVERNANCE
-
-1. **Client JavaScript Minimization:**
-   * Do not declare `"use client"` globally or at layout roots.
-   * Keep Client Components strictly at the interactive leaves (buttons, inputs, canvas charts, live clocks).
-   * Prefer React Server Components (RSC) for page shells, layout structures, and static text.
-2. **Bundle Discipline:**
-   * Route-level code splitting must ensure visiting `/dashboard` loads zero code for `/analytics`, `/focus`, or `/settings`.
-   * Heavy libraries (Chart.js) must be dynamically imported via `next/dynamic` or `React.lazy()` with `ssr: false`.
-3. **Resource Leak Prevention:**
-   * Every `setInterval`, `setTimeout`, and `addEventListener` inside React hooks must return a thorough cleanup function (`useEffect` teardown).
-   * Firestore `onSnapshot` listeners must unsubscribe cleanly on component unmount or user logout.
-   * Chart.js canvas instances must be explicitly destroyed (`chart.destroy()`) before creating new instances or unmounting.
-4. **Main Thread Non-Blocking:**
-   * Avoid heavy synchronous JSON operations or multi-thousand-item array sorting directly in event handlers.
-   * Debounce all autosave routines (minimum 180ms debounce window).
-
----
-
-## 5. DEPENDENCY ADDITION CRITERIA
-
-Before proposing or installing any third-party npm package, answer and document:
-
-| Question | Evaluation Standard |
-| :--- | :--- |
-| **1. What real problem does it solve?** | Must address a concrete functional gap; "it is popular" is an invalid reason. |
-| **2. What is the bundle cost?** | Must check bundlephobia / minified+gzipped footprint; reject heavy packages. |
-| **3. Does native platform already provide it?** | If native browser APIs, Next.js built-ins, or small internal utils solve it, write the utility. |
-| **4. Does it improve long-term maintainability?** | Must have active maintenance, TypeScript support, and zero conflicting peer dependencies. |
-
-*Approved Stack Components:* Next.js 16, React 19, TypeScript, Tailwind CSS (build-time), Zustand, Radix UI primitives, Lucide React, `idb`.  
-*Disallowed Without Explicit Permission:* Heavy UI frameworks (Bootstrap, MUI, AntD, Chakra), arbitrary CSS libraries, redundant state managers (Redux, MobX).
+1. **Color & Surface Fidelity:**
+   - Backgrounds: Primary dark `#0b0f19`, secondary dark `#0f172a`, card surface `rgba(15, 23, 42, 0.75)` with backdrop blur.
+   - Accents: Emerald (`#10b981`), Indigo (`#6366f1`), Blue (`#3b82f6`), Amber (`#f59e0b`), Rose (`#f43f5e`).
+   - Text: High-contrast white/slate-100 on dark; muted slate-400 for metadata and timestamps.
+2. **Typography System:**
+   - Display/Numerics: *Outfit*, *Rajdhani*, *Chakra Petch*.
+   - Body/UI: *Inter*, *Plus Jakarta Sans*.
+   - Monospace/Code/Timers: *JetBrains Mono*.
+   - Fonts must be loaded cleanly without render-blocking layout shifts (using `next/font` in target architecture).
+3. **Card & Component Densities:**
+   - Border radius, box shadows, and glow borders (`.glass-card`, `.cyber-badge`, `.glowing-input`) must match exact pixel values.
+4. **Animations & Transitions:**
+   - Shimmer progress bars (`.shimmer-progress`), aura pulses (`.animate-aura`), slide-up route transitions (`.animate-page-enter`), and confetti bursts must be preserved.
 
 ---
 
-## 6. SECURITY & CREDENTIAL HYGIENE
+## 3. BUSINESS LOGIC & DATA MODEL INTEGRITY
 
-1. **Private Access Enforcement:** The application must remain strictly single-tenant for `ris2k29@gmail.com`.
-2. **Zero Client Secrets:**
-   * Never commit or bundle `firebase-service-account.json` into client builds or public files.
-   * Never expose private keys, database secrets, or admin credentials.
-   * Never prefix private environment variables with `NEXT_PUBLIC_`.
-3. **Client-Side Auth Isolation:**
-   * Firebase Admin SDK (`firebase-admin`) must remain strictly on the server or in Node.js backup CLI scripts.
-   * The browser client interacts solely via standard Firebase Web Client SDK subject to `firestore.rules`.
-4. **Backup Directory Immutability:**
-   * Automated backup scripts in `scripts/` must strictly operate in **READ-ONLY** mode against live Firestore unless running an explicit manual restore via `scripts/restore.js`.
+1. **KPI Metrics Engine:**
+   - `recalculateTotals()`, `updateCountdown()`, `updateSuccessScore()`, and `updateMetrics()` in `js/core/metrics.js` must yield identical mathematical outputs for identical inputs.
+2. **Pace Estimation Engine:**
+   - Target velocity formulas, required chapters per day calculations, and date projections in `js/features/pace/` must not deviate by even 0.01 ch/day.
+3. **Multi-Tier Targets Hierarchy:**
+   - Bi-directional cascade: `monthlyTargetsDatabase` $\leftrightarrow$ `weeklyTargetsDatabase` $\leftrightarrow$ `dailyTargetsDatabase` $\leftrightarrow$ `tasks`.
+   - Modifying or completing a task must continue to update linked daily, weekly, and monthly target records consistently.
+4. **Focus Timer Engine:**
+   - Stopwatch and countdown timers must maintain Web Worker or `performance.now()` precision with sub-second drift compensation.
+   - Session logs in `timerLogs` must maintain exact schema: `{ id, startTime, endTime, durationMinutes, subjectId, tag, notes, date }`.
 
 ---
 
-## 7. AI AGENT SESSION WORKFLOW
+## 4. CODE QUALITY & TYPESCRIPT DISCIPLINE
 
-At the start of every future modernization turn, the AI agent MUST:
-1. Consult `docs/MEMORY.md` to identify active phase, latest checkpoint, and next scheduled task.
-2. Read the corresponding phase specification in `docs/TASKS.md`.
-3. Adhere strictly to the design and performance constraints in `docs/RULES.md`.
-4. Perform work strictly within the scope of the requested phase.
-5. Verify changes with automated tests and visual comparisons.
-6. Update `docs/TASKS.md` and `docs/MEMORY.md` before concluding the turn.
+1. **Strict TypeScript:**
+   - No `any` type shortcuts.
+   - Comprehensive interfaces for all domain entities: `Task`, `Track`, `Subject`, `Chapter`, `PaceGoal`, `Target`, `ExamSession`, `TimerLog`, `AppState`.
+2. **Component Architecture:**
+   - Server Components by default for static shells and layout wrappers.
+   - Client Components (`"use client"`) only at interactive leaves (interactive buttons, input forms, canvas charts, live timers).
+   - Component files must remain focused; no monster component files > 400 lines.
+3. **Memory & Listener Hygiene:**
+   - Every `useEffect` containing event listeners, intervals, or observers must return a comprehensive teardown/cleanup callback.
+   - Firestore snapshot listeners must be cleanly unsubscribed on unmount.
+   - Chart.js instances must call `.destroy()` before canvas re-renders or unmounts.
+
+---
+
+## 5. DOCUMENTATION & SESSION CONTINUITY
+
+At any point in time, the documentation in `docs/` must provide immediate answers to:
+- **What has been completed?** (`docs/TASKS.md` + `docs/MIGRATION-LOG.md`)
+- **What is currently being worked on?** (`docs/MEMORY.md`)
+- **What remains to be done?** (`docs/MODERNIZATION-PLAN.md`)
+- **What changed and why?** (`docs/MIGRATION-LOG.md`)
+- **What is the next immediate step?** (`docs/MEMORY.md`)

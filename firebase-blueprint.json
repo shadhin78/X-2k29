@@ -203,9 +203,9 @@
     }
   },
   "firestore": {
-    "/users/{userId}": {
+    "/x29/{docId}": {
       "schema": "UserWorkspace",
-      "description": "Private user workspace state and execution plan"
+      "description": "Fixed single-user X-29 workspace state, execution plan, and cross-device sync"
     },
     "/test/{docId}": {
       "schema": "TestConnection",

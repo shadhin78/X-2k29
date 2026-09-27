@@ -1,111 +1,106 @@
-# X-29 ADVANCE — PERSISTENT AI PROJECT MEMORY
+# X-29 ADVANCE — PERSISTENT PROJECT MEMORY LEDGER
 
-> **Document Version:** 1.0.0  
-> **Last Updated:** 2026-09-23  
+> **Document Version:** 2.0.0  
+> **Date:** 2026-09-26  
 > **Status:** Active Memory Ledger  
-> **Current Phase:** Phase 0 (Full Audit & AI Project Memory Initialization) — Completed  
-> **Next Recommended Phase:** Phase 1 (Baseline & Safety Checkpoints)
+> **Master Rule:** This file preserves the complete contextual state across AI sessions. Update after every completed step.
 
 ---
 
-## 1. Migration Phase & Progress Ledger
-
-* **Active Phase:** Phase 0 — Full Audit & Contextual Initialization.
-* **Completed Milestones:**
-  * Complete repository inspection: all folders, modules, pages, configurations, and assets indexed.
-  * Dependency graph and large file profiling completed.
-  * Automated regression test suite executed (57/57 tests passing in `tests/full-regression.test.js`).
-  * Firestore security rules (`firestore.rules`) and document schema analyzed.
-  * AI Project Memory files initialized in `docs/`:
-    * `docs/PRD.md` — Real product requirements, use cases, and non-negotiables.
-    * `docs/ARCHITECTURE.md` — Current baseline vs. target Next.js 16/React/TypeScript architecture.
-    * `docs/RULES.md` — Strict governance, zero-redesign rule, security, and performance standards.
-    * `docs/DESIGN.md` — Complete documentation of existing visual language, typography, and components.
-    * `docs/TASKS.md` — 21-phase comprehensive modernization roadmap with validation criteria.
-    * `docs/MEMORY.md` — Persistent cross-session knowledge base.
+## Current Step
+- **Current Step:** STEP 002 — Performance Baseline & Metric Profiling (COMPLETED).
+- **Status:** READY FOR STEP 003.
 
 ---
 
-## 2. Latest Architectural Discoveries & Decisions
-
-1. **Monolithic Firestore Document (`/users/{userId}`):**
-   * The live database (`x-2k-29`) stores the entire user workspace inside a single document.
-   * `firestore.rules` enforces a strict whitelist of 48 top-level keys.
-   * *Architectural Decision:* Any modernization must preserve the schema of this monolithic document byte-for-byte to maintain 100% compatibility with existing backups and the Node.js backup/restore tools (`scripts/backup.js`, `scripts/restore.js`).
-2. **Conflict Resolution & Array Reconciliation:**
-   * A sophisticated sync engine is already implemented in `js/firebase.js` using `_lastWriteId` matching, `syncGeneration` tokens, `syncSessionId`, and `_tombstones` tracking.
-   * *Architectural Decision:* When migrating to React/Zustand, this conflict resolution engine must be ported directly to avoid data corruption during multi-device or offline use.
-3. **Target Cascade Hierarchy:**
-   * The multi-tier targets hierarchy (`monthlyTargetsDatabase` $\rightarrow$ `weeklyTargetsDatabase` $\rightarrow$ `dailyTargetsDatabase` $\rightarrow$ `tasks`) is tightly coupled. Toggling a task in `taskEngine.js` triggers optimistic updates, metrics recalculation, and bi-directional target reconciliation.
-   * *Architectural Decision:* Target models must not be changed. The cascade logic will be preserved in a dedicated `useTargetsStore` and `useTasksStore`.
-4. **40 Inline Modals in Shell:**
-   * `index.html` currently carries 40 distinct modal dialog markups loaded upfront.
-   * *Architectural Decision:* Replace this massive static DOM payload with accessible Radix UI dialog primitives rendered conditionally on demand.
-5. **Absent Service Worker:**
-   * Although `manifest.json` and PWA icons exist, `sw.js` is not implemented in the current baseline.
-   * *Architectural Decision:* Implement a robust Workbox/Serwist Service Worker with a conservative Network-First caching strategy to prevent serving stale study data.
+## Previous Completed Step
+- **Previous Completed Step:** STEP 001 — Architecture Audit & System Inventory.
 
 ---
 
-## 3. Top Large Files & Refactoring Targets
-
-| File | Size | Responsibility | Modernization Strategy |
-| :--- | :--- | :--- | :--- |
-| `index.html` | 294.7 KB | SPA shell + 40 modals | Next.js App Router shell + on-demand portal modals |
-| `js/features/targets/monthlyTargets.js` | 282.0 KB | MTDB, auto-spread, batch allocator | Split into allocator, auto-spread, and MTDB view components |
-| `pages/Daily Actions/monthly target setup/monthly target setup.js` | 194.2 KB | Target setup view | Eliminate duplication; consume shared target store |
-| `shared/services/timerService.js` | 118.8 KB | Focus clock, alarms, logs, sessions | Split into clock engine, fullscreen modal, and logger |
-| `js/features/targets/weeklyTargets.js` | 112.7 KB | WTDB, ISO week allocations | Modularize weekly target cascade into discrete hooks |
-| `js/features/analytics/spectra.js` | 112.6 KB | Spectra charts & heatmaps | Dynamically imported React Chart.js components |
-| `js/features/outcome/outcomeResults.js` | 111.4 KB | Results, passing grades, celebration | Deconstruct HTML strings into typed React components |
-| `js/features/pace/paceManager.js` | 107.7 KB | Velocity estimation & deadlines | Pure TypeScript math functions + UI components |
-| `js/features/dashboard/dashboard.js` | 102.8 KB | Dashboard checklists & KPI cards | Split into KPI cards, Daily Checklist, and Trend widgets |
-| `js/features/tasks/taskEngine.js` | 94.9 KB | Task scheduling, toggling, dates | Split into study plan generator, task toggle, and edit modal |
-
----
-
-## 4. Known Technical Problems & Gotchas
-
-1. **Render-Blocking CDNs:**
-   * `<head>` loads Tailwind JIT CDN (`cdn.tailwindcss.com`), Chart.js CDN, and Firebase Compat libraries. These explain the 14.6s FCP and 29.9s LCP recorded in the performance baseline.
-2. **Circular Invocation Risks:**
-   * Past development encountered reentrancy loops between `handleTaskToggle()`, `updateMetrics()`, `renderTaskList()`, and `renderUI()`.
-   * *Safety Guard:* Reentrancy flags (`isUpdatingMetrics`, `isRenderingUI`) are currently present. When refactoring to Zustand/React, reactive unidirectional data flow will eliminate the need for manual reentrancy flags.
-3. **Startup Null Reference Guard:**
-   * Baseline audit noted: `updateManageDropdown()` historically threw a TypeError on startup if the Master Config DOM fragment was not yet injected. The current code guards against this, but component-based scoping will permanently eliminate cross-page DOM lookup errors.
-4. **Desktop Fullscreen vs. Mobile Navigation:**
-   * The Focus Timer fullscreen mode uses strict hardware acceleration (`transform: translate3d(0, 0, 0)`) and fixed viewport overrides. When porting to React, ensure browser fullscreen and CSS fullscreen states remain properly isolated.
+## What Was Changed
+- Conducted full architectural and code audit of the entire 168-file X-29 repository.
+- Cataloged exact byte counts, line counts, and responsibilities for all 106 JS files (3.02 MB), 13 HTML files (1.01 MB), and 13 CSS files (52.2 KB).
+- Executed all automated regression test suites (`npm test`) — 14 test suites, 57/57 tests passed.
+- Initialized clean Git tracking with author configuration and created root commit `fd26c21`.
+- Built the complete permanent 9-document migration governance system in `docs/`:
+  1. `docs/CURRENT-STATE.md` (Comprehensive audit of architecture, files, problems, dependencies)
+  2. `docs/MODERNIZATION-PLAN.md` (Complete 36-step roadmap with detailed workflows)
+  3. `docs/ARCHITECTURE.md` (Baseline vs. Target Next.js 16/React 19/TypeScript architecture)
+  4. `docs/RULES.md` (Strict 15 non-negotiable rules, zero redesign rule)
+  5. `docs/DESIGN-PARITY.md` (Checklist covering all 11 views and 40 modals)
+  6. `docs/TASKS.md` (Detailed task tracker for every step)
+  7. `docs/MEMORY.md` (Cross-session memory ledger)
+  8. `docs/PERFORMANCE.md` (Performance tracking baseline and targets)
+  9. `docs/MIGRATION-LOG.md` (Chronological history of migration actions)
+- Verified build and lint integrity (`compile_applet` build succeeded, `lint_applet` passed).
 
 ---
 
-## 5. Performance Baseline Summary (2026-09-05)
-
-* **Performance Score:** 37 / 100
-* **Accessibility Score:** 80 / 100
-* **Best Practices:** 96 / 100
-* **SEO:** 91 / 100
-* **First Contentful Paint (FCP):** 14.6 s
-* **Largest Contentful Paint (LCP):** 29.9 s
-* **Time to Interactive (TTI):** 30.0 s
-* **Total Blocking Time (TBT):** 750 ms
-* **Cumulative Layout Shift (CLS):** 0
-* **Total Network Transferred:** 5.02 MB across 47 requests
-* **Total Project JS:** 2.54 MB across 25 scripts
+## Important Architectural Decisions
+1. **Preserve Single-Document Firestore Payload:** The live database (`ai-studio-x2k29-0bea0128-fcaa-4732-97b2-c13b97d4515f`) stores user state at `x29/state`. All 48 whitelisted keys and data types must be preserved byte-for-byte to maintain 100% compatibility with existing backups and the Node.js backup/restore tools (`scripts/backup.js`, `scripts/restore.js`).
+2. **Next.js 16 App Router as Target Engine:** Next.js provides the optimal path for React Server Components (RSC) to stream layout shells with zero client JavaScript, while enabling route-level code-splitting and dynamic imports for Chart.js.
+3. **Zustand Domain Partitioning:** Replace the monolithic mutable `window.AppState` with domain stores (`useTaskStore`, `useTargetStore`, `usePaceStore`, `useTimerStore`, `useConfigStore`, `useSyncStore`) with fine-grained selectors and an optimistic sync middleware.
+4. **Radix UI Headless Modals:** The 40 inline modal dialogs inside `index.html` will be ported to accessible Radix Dialog primitives rendered on-demand, pruning over 350 KB of static DOM from initial page load.
+5. **IndexedDB Local-First Persistence:** Replace synchronous `localStorage` with `idb` to prevent main-thread UI freezing during multi-megabyte study plan autosaves.
+6. **Zero Visual Redesign:** Visual appearance, colors, fonts, spacing, sizing, buttons, icons, and animations are strictly preserved.
 
 ---
 
-## 6. Last Verified State & Git Checkpoint
-
-* **Branch:** `main`
-* **Commit:** `0f104d0` (all project directories tracked, 57/57 regression tests passing)
-* **Automated Tests:** 57 / 57 passing (`node tests/full-regression.test.js`)
-* **Working Tree:** Clean & synced with `origin/main` on GitHub.
+## Files Changed
+- `docs/CURRENT-STATE.md` (Created)
+- `docs/MODERNIZATION-PLAN.md` (Created)
+- `docs/ARCHITECTURE.md` (Updated to v2.0.0)
+- `docs/RULES.md` (Updated to v1.1.0)
+- `docs/DESIGN-PARITY.md` (Created)
+- `docs/TASKS.md` (Updated to v2.0.0)
+- `docs/PERFORMANCE.md` (Created)
+- `docs/MIGRATION-LOG.md` (Created)
+- `docs/MEMORY.md` (Updated to v2.0.0)
 
 ---
 
-## 7. Next Recommended Task
+## Known Issues
+1. **Monolithic DOM Weight in `index.html`:** Shell has 7,814 lines (592.56 KB) and 40 inline modals loaded upfront. (To be resolved in STEPS 008, 025, 026).
+2. **Render-Blocking External CDNs in `<head>`:** `cdn.tailwindcss.com`, Chart.js, and Firebase compat scripts induce 14.6s FCP. (To be resolved in STEPS 005, 017, 028).
+3. **Absence of Service Worker:** While `manifest.json` exists, there is no registered `sw.js`. (To be resolved in STEP 031).
+4. **Unbundled JavaScript:** 3.02 MB of raw JavaScript loaded via 35 synchronous `<script>` tags. (To be resolved in STEPS 004, 027, 028).
 
-When instructed by the user to proceed:
-1. **Initiate Phase 1:** Run `node scripts/backup.js` and `node scripts/verify-backup.js` to ensure a verified live cloud snapshot is recorded in `D:\X-29 Project\X-29\X-29-backup\`.
-2. **Create Git Checkpoint:** Commit the documentation suite before modifying project infrastructure.
-3. **Await instruction to begin Phase 2 (Next.js Foundation).**
+---
+
+## Remaining Risks
+1. **Target Hierarchy Cascade Regression:** The multi-tier cascade (Monthly $\rightarrow$ Weekly $\rightarrow$ Daily $\rightarrow$ Tasks) is complex. Must preserve bi-directional calculations and verify with existing test suites.
+2. **Focus Timer Precision in React:** React component re-renders must not introduce clock drift. Must use Web Worker drift compensation as defined in STEP 016.
+3. **40 Modal DOM ID Parity:** Any missing element ID in the migrated modals could break form submission or tests. `tests/modals.test.js` serves as verification gate.
+
+---
+
+## Performance Findings
+- **JS Payload:** 3,023.58 KB across 106 scripts.
+- **HTML Payload:** 1,015.82 KB across 13 templates (`index.html` is 592.56 KB).
+- **CSS Payload:** 52.22 KB across 13 stylesheets.
+- **Network Transfer:** 5.02 MB across 47 requests.
+- **Lab Core Web Vitals:** FCP 14.6s, LCP 29.9s, TTI 30.0s, TBT 750ms, CLS 0.00.
+- **Lighthouse Scores:** Performance 37, Accessibility 80, Best Practices 96, SEO 91.
+
+---
+
+## Visual Parity Status
+- **Baseline Design Verified:** Exact color codes (`#0b0f19`, `#0f172a`), font families (*Outfit*, *Inter*, *JetBrains Mono*, *Rajdhani*), border radii, and `.glass-card` classes cataloged in `docs/DESIGN-PARITY.md`.
+- **Target Parity:** 100% identical look and feel across all 11 views and 40 modals.
+
+---
+
+## Git Checkpoint
+- **Branch:** `master`
+- **Baseline Commit:** `fd26c21` (`chore: baseline commit before modernization`)
+- **Working Tree Status:** Documentation added; ready for next checkpoint.
+
+---
+
+## Next Step
+- **Awaiting User Instruction:**
+  ```text
+  Continue from STEP 003
+  ```
+  *(STEP 003: Safety Checkpoints & Backup Verification)*

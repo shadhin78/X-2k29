@@ -175,74 +175,23 @@ it('initServices registers TimerService, visibility, and PWA listeners', () => {
 });
 
 // ----------------------------------------------------
-// 5. Authentication Lifecycle & Route Guard
+// 5. Workspace Lifecycle & Direct Initialization
 // ----------------------------------------------------
-console.log('\n5. Authentication Lifecycle & Route Guard');
+console.log('\n5. Workspace Lifecycle & Direct Initialization');
 
-it('initAuth sets up admin session, populates profile, and loads from cloud', async () => {
-    let authCallback = null;
+it('initWorkspace initializes directly, loads from cloud, and mounts Dashboard without login', async () => {
     let cloudLoaded = 0;
 
-    global.window.AuthService = {
-        onAuthStateChanged: (cb) => { authCallback = cb; }
-    };
     global.window.FirebaseService = {
         fetchConfig: async () => ({ apiKey: 'mock' }),
         init: () => {},
         loadFromCloud: () => { cloudLoaded++; }
     };
 
-    await App.initAuth();
-    assert(typeof authCallback === 'function', 'onAuthStateChanged callback must be registered');
+    await App.initWorkspace();
 
-    // Simulate authenticated admin
-    const adminUser = {
-        email: 'ris2k29@gmail.com',
-        displayName: 'RIS Admin'
-    };
-
-    await authCallback(adminUser);
-
-    assert.strictEqual(global.window.currentUser, adminUser, 'currentUser should be set to admin user');
-    assert.strictEqual(elements.get('profile-name').textContent, 'RIS Admin', 'Profile name should be updated');
-    assert.strictEqual(elements.get('profile-email').textContent, 'ris2k29@gmail.com', 'Profile email should be updated');
-    assert.strictEqual(cloudLoaded, 1, 'loadFromCloud should be called for authorized admin');
-    assert.strictEqual(global.window.AppState.isAppInitialized, true, 'isAppInitialized should be true after authorized auth');
-});
-
-it('initAuth redirects unauthorized user to login.html?error=denied', async () => {
-    let authCallback = null;
-    let logoutCalled = 0;
-
-    global.window.AuthService = {
-        onAuthStateChanged: (cb) => { authCallback = cb; },
-        logout: async () => { logoutCalled++; }
-    };
-
-    await App.initAuth();
-
-    const unauthorizedUser = {
-        email: 'intruder@test.com',
-        displayName: 'Intruder'
-    };
-
-    await authCallback(unauthorizedUser);
-
-    assert.strictEqual(logoutCalled, 1, 'Unauthorized user should be logged out');
-    assert.strictEqual(global.window.location.href, 'login.html?error=denied', 'Unauthorized user should be redirected');
-});
-
-it('initAuth redirects unauthenticated session to login.html', async () => {
-    let authCallback = null;
-
-    global.window.AuthService = {
-        onAuthStateChanged: (cb) => { authCallback = cb; }
-    };
-
-    await App.initAuth();
-    await authCallback(null);
-
-    assert.strictEqual(global.window.location.href, 'login.html', 'Null session should redirect to login.html');
+    assert.strictEqual(cloudLoaded, 1, 'loadFromCloud should be called directly');
+    assert.strictEqual(global.window.AppState.isAppInitialized, true, 'isAppInitialized should be true');
 });
 
 // ----------------------------------------------------

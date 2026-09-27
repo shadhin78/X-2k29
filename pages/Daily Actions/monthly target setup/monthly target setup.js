@@ -20,6 +20,14 @@
         },
 
         mount: function () {
+            // Guard: Never mount MonthlyTargetPage if the router is currently on another page (e.g. dashboard)
+            if (window.Router && window.Router.activePageId && 
+                window.Router.activePageId !== 'monthly-target-setup' && 
+                window.Router.activePageId !== 'monthly target setup' && 
+                window.Router.activePageId !== 'monthly target') {
+                return;
+            }
+
             this.isMounted = true;
 
             // Check if there was a deferred action requested from outside
